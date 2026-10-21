@@ -1,0 +1,2211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>起个卦 · 求签</title>
+<style>
+/* ==================== §CSS 色彩令牌区（P2 国风美术 · 换肤只动 :root） ==================== */
+:root{
+  /* ═══ 基础底色（宣纸系） ═══ */
+  --bg-paper:     #f8f4ec;
+  --bg-card:      #fffdf6;
+  --c-ink:        #2c2c2a;
+  --c-ink2:       #666666;
+  --c-line:       #e2d9c6;
+  /* ═══ 国风扩展色板 ═══ */
+  --bg-warm:      #e8c89a;
+  --bg-indigo:    #2d4a6b;
+  --bg-rose:      #d4a0a0;
+  --bg-pine:      #4a7c59;
+  --bg-dark:      #1a2a4a;
+  /* ═══ 金系 ═══ */
+  --gold:         #c9a961;
+  --gold-light:   #e8d4a0;
+  --gold-pale:    #f5edd8;
+  /* ═══ 红系 ═══ */
+  --vermilion:    #b4232a;
+  --coral:        #c44a2a;
+  /* ═══ 功能色（index.html 实际引用的变量名） ═══ */
+  --c-btn:        #b4232a;
+  --c-btn-t:      #fffdf6;
+  --c-accent:     #c9a961;
+  --c-vermilion:  #b4232a;
+  --c-rice:       #f5f0e4;
+  --c-ink-black:  #2c2c2a;
+  --c-deep-blue:  #2d4a6b;
+  --c-matte-gold: #c9a961;
+  --c-pale-gold:  #e8d4a0;
+  --c-jade-green: #4a7c59;
+  --c-lotus-pink:#d4a0a0;
+  --c-cloud:      #ece8df;
+  --c-bamboo:     #6b8e5a;
+  --c-silver-gray:#b9bdc4;
+  --c-muted-red:  #c4756e;
+  /* ═══ 云线色 ═══ */
+  --cloud-line:   #c9a961;
+  /* ═══ 签级七档色（上上→下下，保持不变） ═══ */
+  --t-top:        #c9a961;
+  --t-high:       #d4a574;
+  --t-mid-high:   #5a8a76;
+  --t-mid:        #b98a3e;
+  --t-mid-low:    #3a5a7a;
+  --t-low:        #555a62;
+  --t-bottom:     #3d3a45;
+  /* ═══ 渐变与纹理 ═══ */
+  --bg-paper-grad:    linear-gradient(180deg, #f8f4ec 0%, #f0e8d8 50%, #f5f0e8 100%);
+  --btn-grad:         linear-gradient(135deg, #d4a84b 0%, #c9a961 40%, #b89030 70%, #a07820 100%);
+  --card-shadow:      0 2px 16px rgba(26,42,74,.06), 0 1px 4px rgba(26,42,74,.04);
+  --card-border:      linear-gradient(135deg, rgba(201,169,97,.3) 0%, rgba(201,169,97,.15) 100%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:"Noto Serif SC","Songti SC",STSong,"SimSun","PingFang SC","Microsoft YaHei",serif;
+  background:var(--bg-paper);color:var(--c-ink);-webkit-font-smoothing:antialiased;
+  background-attachment:fixed;
+  background-image:
+    radial-gradient(ellipse at 20% 30%,rgba(201,169,97,.04) 0%,transparent 50%),
+    radial-gradient(ellipse at 80% 70%,rgba(180,35,42,.025) 0%,transparent 50%),
+    var(--bg-paper-grad);}
+#app{max-width:480px;margin:0 auto;min-height:100%;padding:0 14px 84px;position:relative}
+#topbar{padding:16px 2px 8px;display:flex;align-items:baseline;justify-content:space-between}
+#topbar h1{
+  font-size:22px;letter-spacing:4px;color:var(--c-accent);font-weight:700;
+  font-family:"Songti SC",STSong,"Noto Serif SC","SimSun",serif;position:relative}
+#topbar h1::after{
+  content:'';display:inline-block;width:8px;height:8px;
+  background:var(--c-vermilion);border-radius:50%;margin-left:6px;vertical-align:super}
+#topdate{font-size:12px;color:var(--c-ink2);letter-spacing:.5px}
+.view{padding-top:10px}
+.hidden{display:none !important}
+#banner{margin:10px 0 0;padding:10px 14px;border-radius:10px;
+  background:linear-gradient(135deg,#f5edd8 0%,#ede0c8 100%);
+  border:1px solid #e0d0a8;color:#6a4f1d;font-size:13px;line-height:1.7;letter-spacing:.3px}
+#banner.warn{
+  background:linear-gradient(135deg,#f2e0da 0%,#e8d0c8 100%);
+  border-color:#d4b8ac;color:#8b3a2a}
+.card{
+  background:var(--c-card);border-radius:12px;padding:16px;margin:14px 0;
+  border:1px solid transparent;box-shadow:var(--card-shadow);
+  background-image:linear-gradient(var(--c-card),var(--c-card)),var(--card-border);
+  background-origin:padding-box,border-box;background-clip:padding-box,border-box}
+.card h3{
+  font-size:16px;margin-bottom:10px;color:var(--c-accent);
+  font-family:"Songti SC",STSong,"Noto Serif SC","SimSun",serif;
+  font-weight:600;letter-spacing:2px;padding-bottom:8px;border-bottom:1px solid var(--c-line);
+  position:relative}
+.card h3::after{
+  content:'';position:absolute;bottom:-1px;left:0;width:40px;height:2px;
+  background:var(--c-matte-gold);border-radius:1px}
+.poem{
+  font-family:"Songti SC",STSong,"Noto Serif SC","SimSun",serif;
+  white-space:pre-line;line-height:2.1;font-size:15.5px;margin:10px 0;
+  color:var(--c-ink);letter-spacing:.5px;text-align:justify}
+.muted{color:var(--c-ink2);font-size:12.5px;line-height:1.8}
+.slotlist{margin:12px 0;font-size:13.5px;line-height:1.9}
+.slotlist b{color:var(--c-accent);font-weight:600}
+.tier-badge{
+  display:inline-block;padding:4px 12px;border-radius:6px;color:#fff8ef;
+  font-size:13px;letter-spacing:2px;margin-right:8px;font-weight:500;
+  text-shadow:0 1px 2px rgba(0,0,0,.15)}
+.idx-line{margin-top:10px;font-size:12px;color:var(--c-ink2);letter-spacing:.3px}
+label{display:block;font-size:13px;color:var(--c-ink2);margin:14px 0 6px;letter-spacing:.5px}
+textarea{width:100%;min-height:68px;padding:12px;border:1px solid var(--c-line);border-radius:10px;
+  background:var(--c-card);font-size:15.5px;font-family:inherit;resize:vertical;
+  transition:border-color .2s}
+textarea:focus{outline:none;border-color:var(--c-accent);box-shadow:0 0 0 3px rgba(139,105,20,.12)}
+#q-count{font-size:12px;color:var(--c-ink2);margin:6px 0 12px;text-align:right;letter-spacing:.3px}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn-main{
+  display:block;width:100%;min-height:56px;border:none;border-radius:12px;
+  background:var(--btn-grad);color:var(--c-btn-t);font-size:18px;letter-spacing:8px;
+  box-shadow:0 3px 10px rgba(166,58,58,.3),inset 0 1px 0 rgba(255,255,255,.15);
+  font-weight:500;position:relative;overflow:hidden;transition:transform .1s,box-shadow .1s}
+.btn-main::before{
+  content:'';position:absolute;top:0;left:-100%;width:200%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+  transition:left .5s}
+.btn-main:active{transform:scale(.985);box-shadow:0 1px 4px rgba(166,58,58,.25)}
+.btn-main[disabled]{background:linear-gradient(180deg,#c4bfaa 0,#b0aa94 100%);
+  box-shadow:none;cursor:not-allowed;color:#9a9484}
+.btn-sub{
+  min-height:46px;padding:0 20px;border-radius:10px;border:1.5px solid var(--c-accent);
+  background:var(--c-card);color:var(--c-accent);font-size:14px;letter-spacing:3px;
+  margin-top:12px;transition:all .2s;font-weight:500}
+.btn-sub:active{background:var(--c-accent);color:var(--c-btn-t)}
+.hl-row{display:flex;margin:7px 0;font-size:14px;line-height:1.8}
+.hl-row .k{width:64px;flex:none;color:var(--c-ink2);font-size:13px}
+.colorline{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px}
+.colorline .grp{width:44px;flex:none;font-size:12px;color:var(--c-ink2)}
+.swatch{
+  display:inline-block;width:22px;height:22px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.6);
+  box-shadow:0 1px 3px rgba(0,0,0,.12),inset 0 1px 2px rgba(0,0,0,.06);
+  vertical-align:-4px;transition:transform .15s}
+.swatch:hover{transform:scale(1.15)}
+#yueli-head{display:flex;align-items:center;justify-content:space-between;margin:8px 0}
+#yueli-head .ym{
+  font-size:17px;color:var(--c-accent);letter-spacing:2px;
+  font-family:"Songti SC",STSong,"Noto Serif SC","SimSun",serif;font-weight:600}
+#yueli-head button,#huangli-head button{
+  min-width:44px;min-height:44px;border:1px solid var(--c-line);border-radius:10px;
+  background:var(--c-card);font-size:18px;color:var(--c-ink);cursor:pointer;
+  transition:background .15s,color .15s;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+#yueli-head button:active,#huangli-head button:active{background:var(--c-line)}
+/* P3 导出记录按钮 */
+.btn-export{
+  display:inline-flex;align-items:center;gap:4px;padding:6px 14px;
+  border:1.5px solid var(--c-accent);border-radius:10px;
+  background:var(--c-card);color:var(--c-accent);font-size:13px;
+  font-family:inherit;letter-spacing:1px;cursor:pointer;
+  transition:all .2s;font-weight:500;white-space:nowrap}
+.btn-export:active{background:var(--c-accent);color:var(--c-btn-t)}
+.btn-export:disabled{opacity:.4;cursor:not-allowed}
+#huangli-head{display:flex;align-items:center;justify-content:space-between;margin:8px 0}
+#huangli-head .hl-date{
+  font-size:15.5px;color:var(--c-accent);letter-spacing:1.5px;
+  font-family:"Songti SC",STSong,"Noto Serif SC","SimSun",serif}
+#huangli-head .hl-today{
+  font-size:12px;color:var(--c-accent);cursor:pointer;text-decoration:none;
+  padding:0 6px;border:none;background:none;font-weight:500;transition:opacity .2s}
+#huangli-head .hl-today:hover{opacity:.6}
+#cal-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);background:var(--c-card);
+  border:1px solid var(--c-line);border-radius:12px;overflow:hidden;box-shadow:var(--card-shadow)}
+#cal-grid .wd{
+  padding:8px 0;text-align:center;font-size:11.5px;color:var(--c-ink2);
+  background:linear-gradient(180deg,#efe9da 0%,#f0ebdd 100%);font-weight:500;letter-spacing:1px}
+#cal-grid .cell{
+  min-height:52px;text-align:center;padding-top:7px;
+  border-top:1px solid #f2ede0;font-size:14.5px;transition:background .15s;cursor:pointer}
+#cal-grid .cell.off{color:#c7c0b2}
+#cal-grid .cell.today{
+  background:linear-gradient(135deg,#f5ead0 0%,#ede0c0 100%);
+  font-weight:700;color:var(--c-accent)}
+#cal-grid .cell .dot{
+  display:block;width:10px;height:10px;border-radius:50%;margin:4px auto 0;
+  box-shadow:0 1px 2px rgba(0,0,0,.1)}
+#cal-grid .cell .dot.done{
+  box-shadow:0 0 0 2px var(--c-card),0 0 0 4px var(--c-matte-gold)}
+#legend{margin:12px 2px;font-size:11.5px;color:var(--c-ink2);line-height:2.2}
+#legend .dot{
+  display:inline-block;width:9px;height:9px;border-radius:50%;
+  margin:0 4px 0 10px;vertical-align:-1px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+#drawer{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--c-card);
+  border-top:2.5px solid var(--c-accent);border-radius:16px 16px 0 0;
+  max-height:72vh;overflow:auto;
+  padding:14px 16px calc(22px + env(safe-area-inset-bottom));
+  box-shadow:0 -4px 20px rgba(0,0,0,.1)}
+#drawer .d-close{
+  position:sticky;top:0;float:right;min-width:44px;min-height:44px;
+  border:none;background:none;font-size:20px;color:var(--c-ink2);z-index:1;line-height:44px}
+#drawer h4{
+  font-size:15.5px;color:var(--c-accent);margin-bottom:8px;padding-top:4px;
+  font-family:"Songti SC",STSong,"Noto Serif SC","SimSun",serif;letter-spacing:1px}
+.rec-item{
+  display:flex;align-items:center;gap:12px;padding:12px 10px;
+  border-bottom:1px dashed var(--c-line);cursor:pointer;transition:background .15s;border-radius:8px}
+.rec-item:active{background:rgba(139,105,20,.04)}
+.rec-item .dot{width:12px;height:12px;border-radius:50%;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.rec-item .dot.done{box-shadow:0 0 0 2px var(--c-card),0 0 0 4px var(--c-matte-gold)}
+.rec-item .t{font-size:13px;line-height:1.6}
+#tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;
+  display:flex;justify-content:space-around;
+  background:linear-gradient(180deg,#f5f0e4 0%,#ede6d6 100%);
+  border-top:1px solid var(--c-line);padding-bottom:env(safe-area-inset-bottom);
+  box-shadow:0 -1px 6px rgba(0,0,0,.04)}
+#tabbar a{
+  flex:1;max-width:160px;min-height:56px;display:flex;
+  align-items:center;justify-content:center;text-decoration:none;
+  color:var(--c-ink2);font-size:15px;letter-spacing:4px;font-weight:400;
+  transition:color .2s;position:relative}
+#tabbar a.on{
+  color:var(--c-btn);font-weight:700;border-top:3px solid var(--c-btn);padding-top:0}
+#tabbar a.on::after{
+  content:'';position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
+  width:5px;height:5px;background:var(--c-btn);border-radius:50%}
+footer{margin:24px 2px 6px;font-size:11px;color:#a39a89;line-height:1.8;text-align:center;letter-spacing:.3px;padding:0 8px}
+#devpanel{padding:10px;font-size:12px;line-height:1.8;word-break:break-all}
+#devpanel pre{white-space:pre-wrap;font-size:11px;max-height:40vh;overflow:auto}
+@media (min-width:768px){ body{font-size:16px} }
+@media (max-width:380px){
+  #topbar h1{font-size:19px;letter-spacing:3px}
+  .btn-main{font-size:16px;letter-spacing:6px}
+  .card{padding:13px;border-radius:10px}}
+
+/* ==================== §ANIM 动画区（P2 动画总监 · 关建帧） ==================== */
+
+/* ---- 1.5 签筒摇晃动画（P2修复：摇晃目标=签筒而非按钮） ---- */
+@keyframes anim-cylinder-shake{
+  0%{transform:rotate(0deg) translateY(0)} 4%{transform:rotate(-18deg) translateY(-2px)}
+  10%{transform:rotate(16deg) translateY(1px)} 16%{transform:rotate(-14deg) translateY(-1px)}
+  22%{transform:rotate(12deg) translateY(1px)} 28%{transform:rotate(-10deg) translateY(0)}
+  34%{transform:rotate(8deg)} 40%{transform:rotate(-7deg)} 46%{transform:rotate(6deg)}
+  52%{transform:rotate(-5deg)} 58%{transform:rotate(4deg)} 64%{transform:rotate(-3deg)}
+  70%{transform:rotate(2deg)} 76%{transform:rotate(-1.5deg)} 82%{transform:rotate(1deg)}
+  88%{transform:rotate(0deg)} 92%{transform:rotate(-0.8deg) scale(1.015)}
+  96%{transform:rotate(0.3deg) scale(1.005)} 100%{transform:rotate(0deg) scale(1) translateY(0)}
+}
+@keyframes anim-cylinder-float{
+  0%,100%{transform:translateY(0)} 15%{transform:translateY(-5px)} 30%{transform:translateY(3px)}
+  45%{transform:translateY(-4px)} 60%{transform:translateY(2px)} 75%{transform:translateY(-1px)} 90%{transform:translateY(1px)}
+}
+.sign-cylinder-svg.cylinder-shaking{
+  transform-origin:50% 92%;
+  animation:anim-cylinder-shake 1.85s cubic-bezier(.25,.46,.45,.94) forwards,anim-cylinder-float 1.85s ease-in-out;
+  will-change:transform;filter:drop-shadow(0 4px 12px rgba(0,0,0,.2))
+}
+.btn-main.btn-pressing{
+  transform:scale(.95);background:linear-gradient(135deg,#a65d3f,#8b4526);
+  box-shadow:0 2px 8px rgba(122,59,42,.35),inset 0 1px 3px rgba(255,255,255,.15),0 0 20px 5px rgba(212,168,85,.25);
+  transition:transform .15s ease,background .2s ease,box-shadow .3s ease;cursor:default;will-change:transform,box-shadow
+}
+.btn-main.btn-pressing::after{
+  content:"";position:absolute;inset:-6px;border-radius:inherit;
+  box-shadow:0 0 0 0 rgba(212,168,85,.3);animation:btn-press-glow 1.85s ease-out forwards;pointer-events:none
+}
+@keyframes btn-press-glow{
+  0%{box-shadow:0 0 0 0 rgba(212,168,85,.35)} 30%{box-shadow:0 0 22px 6px rgba(212,168,85,.2),0 0 60px 15px rgba(212,168,85,.08)}
+  70%{box-shadow:0 0 8px 3px rgba(212,168,85,.1)} 100%{box-shadow:0 0 0 0 rgba(212,168,85,0)}
+}
+
+/* ---- 1. 摇签动画（签筒摇晃 + 衰减停顿） ---- */
+@keyframes anim-shake{
+  0%   { transform:rotate(0deg); }
+  6%   { transform:rotate(-14deg); }
+  12%  { transform:rotate(13deg); }
+  18%  { transform:rotate(-12deg); }
+  24%  { transform:rotate(11deg); }
+  30%  { transform:rotate(-10deg); }
+  36%  { transform:rotate(9deg); }
+  42%  { transform:rotate(-8deg); }
+  48%  { transform:rotate(7deg); }
+  54%  { transform:rotate(-6deg); }
+  60%  { transform:rotate(5deg); }
+  66%  { transform:rotate(-4deg); }
+  72%  { transform:rotate(3deg); }
+  78%  { transform:rotate(-2deg); }
+  84%  { transform:rotate(1deg); }
+  90%  { transform:rotate(0deg); }
+  94%  { transform:rotate(-1deg) scale(1.02); }  /* 咔哒感 */
+  100% { transform:rotate(0deg) scale(1); }
+}
+@keyframes anim-shake-float{
+  0%,100% { transform:translateY(0); }
+  25%     { transform:translateY(-3px); }
+  75%     { transform:translateY(2px); }
+}
+
+/* ---- 2. 出签卡入场（下方淡入+上移） ---- */
+.card-enter{
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity .4s ease-out, transform .4s ease-out;
+  will-change:opacity,transform;
+}
+.card-enter.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* ---- 3. 签级揭示（scale 微弹 + 高亮一瞬） ---- */
+@keyframes anim-tier-pop{
+  0%   { transform:scale(1); filter:brightness(1); }
+  40%  { transform:scale(1.22); filter:brightness(1.35); }
+  60%  { transform:scale(.96); filter:brightness(1.08); }
+  80%  { transform:scale(1.04); filter:brightness(1.02); }
+  100% { transform:scale(1); filter:brightness(1); }
+}
+.tier-reveal{
+  animation:anim-tier-pop .35s ease-out forwards;
+  will-change:transform,filter;
+}
+
+/* ---- 4. 化解按钮呼吸（脉冲/发光） ---- */
+@keyframes anim-resolve-pulse{
+  0%,100% { box-shadow:0 0 0 0 rgba(138,109,59,.0); }
+  50%      { box-shadow:0 0 12px 3px rgba(138,109,59,.25), 0 0 4px 1px rgba(138,109,59,.15); }
+}
+.resolve-pulse{
+  animation:anim-resolve-pulse 2.5s ease-in-out infinite;
+  will-change:box-shadow;
+}
+
+/* ---- 5. 化解仪式（点灯光晕扩散 + 三息提示） ---- */
+@keyframes anim-ritual-glow{
+  0%   { transform:scale(.3); opacity:.6; }
+  50%  { transform:scale(1.15); opacity:.95; }
+  70%  { transform:scale(.95); opacity:1; }
+  85%  { transform:scale(1.03); opacity:.95; }
+  100% { transform:scale(1); opacity:.85; }
+}
+@keyframes anim-breath-text{
+  0%,100% { opacity:.15; transform:translateY(2px); }
+  50%      { opacity:.9; transform:translateY(0); }
+}
+.ritual-overlay{
+  position:fixed; inset:0; z-index:40;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  background:rgba(245,241,232,.88);
+  pointer-events:auto;
+}
+.ritual-lotus{
+  width:80px; height:80px; border-radius:50%;
+  background:radial-gradient(circle at 45% 40%, #f5e6b8, #d4a855 55%, #a67c30);
+  box-shadow:0 0 30px 8px rgba(212,168,85,.35), 0 0 60px 20px rgba(212,168,85,.12);
+  animation:anim-ritual-glow 2s ease-out forwards;
+  will-change:transform,opacity;
+}
+.ritual-breath{ margin-top:28px; font-size:14px; color:var(--c-accent);
+  letter-spacing:3px; animation:anim-breath-text 3.5s ease-in-out 3; opacity:0;
+}
+.ritual-done{ margin-top:16px; font-size:12px; color:var(--c-ink2); opacity:0;
+  transition:opacity .5s ease .2s; }
+.ritual-overlay.complete .ritual-done{ opacity:1; }
+
+/* ---- 6. 页面切换（交叉淡化） ---- */
+.view{
+  transition:opacity .2s ease;
+  will-change:opacity;
+}
+.view.fade-out{ opacity:0; }
+.view.fade-in{ opacity:1; transition-delay:.1s; }
+
+/* ---- 7. 黄历翻页（淡出再淡入） ---- */
+#huangli-body.flip-out{ opacity:0; transition:opacity .12s ease; will-change:opacity; }
+#huangli-body.flip-in{ opacity:1; transition:opacity .18s ease; will-change:opacity; }
+
+/* ---- 8. 加载/计算中微动画（签筒预备震动暗示） ---- */
+@keyframes anim-ready-pulse{
+  0%,100% { transform:scale(1); }
+  50%      { transform:scale(1.018); }
+}
+.calculating .btn-main{
+  animation:anim-ready-pulse .6s ease-in-out infinite;
+  will-change:transform;
+}
+
+/* ==================== 减弱动画支持 ==================== */
+@media (prefers-reduced-motion: reduce){
+  .btn-main.shaking,
+  .btn-main.shaking::after,
+  .tier-reveal,
+  .resolve-pulse,
+  .ritual-lotus,
+  .ritual-breath,
+  .calculating .btn-main{
+    animation:none !important;
+    transition:none !important;
+  }
+  .card-enter{ opacity:1; transform:none; }
+  .view{ transition:none !important; }
+  .sign-cylinder-svg.cylinder-shaking{animation:none;transform:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.1))}
+  .btn-main.btn-pressing{transform:none;transition:none}
+  .btn-main.btn-pressing::after{animation:none}
+  .sign-cylinder-area.shaking-hint .sign-stick-hint{opacity:.5;transition:none}
+  #huangli-body{ transition:none !important; }
+}
+/* ==================== §ART 美术视觉（P2 · 甄塑之） ==================== */
+
+/* ---- 仙鹤装饰容器 ---- */
+.art-crane-wrap{text-align:center;padding:4px 0 8px;opacity:.92}
+.art-crane-wrap svg{max-width:180px;height:auto}
+
+/* ---- 签筒区域 ---- */
+.sign-cylinder-area{
+  text-align:center;padding:20px 0 16px;position:relative}
+.sign-cylinder-svg{width:100px;height:auto;filter:drop-shadow(0 2px 4px rgba(0,0,0,.1))}
+.sign-stick-hint{
+  display:inline-block;margin-top:4px;font-size:12px;color:var(--c-ink2);
+  letter-spacing:1px;animation:pulse-hint 2.5s ease-in-out infinite}
+@keyframes pulse-hint{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* ---- 祥云分隔线 ---- */
+.cloud-divider{text-align:center;padding:8px 0;opacity:.35}
+.cloud-divider svg{height:20px;width:auto;fill:var(--c-ink2)}
+
+/* ---- 黄历页增强 ---- */
+.hl-icon{display:inline-block;width:18px;text-align:center;font-size:15px;margin-right:4px;vertical-align:-2px}
+.dress-pill{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 12px;
+  border-radius:20px;font-size:12.5px;
+  background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(255,255,255,.4));
+  border:1px solid var(--c-line);margin:4px 4px 4px 0;transition:transform .15s}
+.dress-pill:active{transform:scale(.96)}
+.dress-pill .swatch{width:18px;height:18px;border-width:1.5px}
+.dress-pill .dress-rel{color:var(--c-ink2);font-size:11px}
+
+/* ---- 宜忌图标化 ---- */
+.yi-ji-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.yi-tag{display:inline-flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:6px;font-size:12.5px;
+  background:linear-gradient(135deg,#f8f4e8,#f0ebe0);
+  border:1px solid #e2d9c6;color:var(--c-ink)}
+.ji-tag{display:inline-flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:6px;font-size:12.5px;
+  background:linear-gradient(135deg,#f5eeea,#ede5de);
+  border:1px solid #d9cec2;color:var(--c-ink2)}
+
+/* ---- 化解区域视觉框架 ---- */
+.resolve-frame{
+  border:1.5px solid var(--c-matte-gold);border-radius:14px;
+  padding:16px;margin-top:12px;
+  background:linear-gradient(180deg,rgba(201,162,39,.03) 0%,rgba(255,253,246,0) 100%);
+  position:relative;overflow:hidden}
+.resolve-frame::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--c-matte-gold),transparent)}
+.lotus-lamp-container{text-align:center;padding:10px 0 6px}
+.lotus-lamp-svg{width:48px;height:auto;opacity:.85}
+.resolve-three{margin-top:10px}
+.resolve-item{
+  display:flex;align-items:flex-start;gap:10px;padding:10px 0;
+  border-bottom:1px dashed var(--c-line)}
+.resolve-item:last-child{border-bottom:none}
+.resolve-num{
+  width:22px;height:22px;border-radius:50%;
+  background:var(--c-matte-gold);color:#fff;font-size:12px;
+  display:flex;align-items:center;justify-content:center;
+  flex:none;font-weight:600}
+.resolve-text{font-size:13.5px;line-height:1.7;flex:1}
+.resolve-footer{
+  text-align:center;margin-top:12px;padding-top:10px;
+  border-top:1px solid var(--c-line);
+  font-family:"Songti SC",STSong,"Noto Serif SC","SimSun",serif;
+  font-size:13px;color:var(--c-ink2);font-style:italic;letter-spacing:1px}
+
+/* ---- 签结果页仙鹤装饰 ---- */
+.result-crane{position:absolute;right:8px;top:8px;opacity:.12;pointer-events:none;width:60px;height:auto}
+
+/* ---- 干支信息美化 ---- */
+.ganzhi-block{
+  display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.ganzhi-cell{
+  background:linear-gradient(135deg,#faf7f0,#f5f0e4);
+  border:1px solid var(--c-line);border-radius:8px;padding:8px 10px;text-align:center}
+.ganzhi-cell .gz-label{font-size:11px;color:var(--c-ink2);display:block;margin-bottom:2px}
+.ganzhi-cell .gz-val{font-size:16px;font-weight:600;color:var(--c-accent);
+  font-family:"Songti SC",STSong,"Noto Serif SC","SimSun",serif;letter-spacing:2px}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="topbar"><h1>起个卦</h1><div id="topdate"></div><button id="btn-mute" title="开关音效" aria-label="开关音效" style="background:none;border:none;font-size:18px;cursor:pointer;padding:2px 6px;line-height:1;opacity:.55">🔔</button></header>
+  <div id="banner" class="hidden"></div>
+
+  <section id="view-qiu" class="view">
+    <!-- P2 美术：仙鹤装饰 -->
+    <div class="art-crane-wrap">
+<svg viewBox="0 0 300 230" xmlns="http://www.w3.org/2000/svg" aria-label="展翅仙鹤">
+  <defs>
+    <radialGradient id="crAura" cx="50%" cy="48%" r="50%"><stop offset="0%" stop-color="#c9a961" stop-opacity=".12"/><stop offset="40%" stop-color="#e8d4a0" stop-opacity=".05"/><stop offset="100%" stop-color="#c9a961" stop-opacity="0"/></radialGradient>
+    <radialGradient id="crBody" cx="45%" cy="42%" r="52%"><stop offset="0%" stop-color="#ffffff"/><stop offset="65%" stop-color="#fefefa"/><stop offset="100%" stop-color="#f5f0e4"/></radialGradient>
+    <linearGradient id="crNeck" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1a1a1a"/><stop offset="60%" stop-color="#252525"/><stop offset="100%" stop-color="#2c2c2a"/></linearGradient>
+    <linearGradient id="crWingL" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#2a2a2a"/><stop offset="20%" stop-color="#4a4a4a"/><stop offset="40%" stop-color="#787878"/><stop offset="60%" stop-color="#ababab"/><stop offset="80%" stop-color="#e0e0e0"/><stop offset="95%" stop-color="#fefefa"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>
+    <linearGradient id="crWingR" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2a2a2a"/><stop offset="20%" stop-color="#4a4a4a"/><stop offset="40%" stop-color="#787878"/><stop offset="60%" stop-color="#ababab"/><stop offset="80%" stop-color="#e0e0e0"/><stop offset="95%" stop-color="#fefefa"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>
+    <linearGradient id="crTail" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#1a2a4a"/><stop offset="50%" stop-color="#2a3a5a" stop-opacity=".55"/><stop offset="85%" stop-color="#3a4a6a" stop-opacity=".2"/><stop offset="100%" stop-color="#4a5a7a" stop-opacity="0"/></linearGradient>
+    <linearGradient id="crWingTip" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#c9a961"/><stop offset="60%" stop-color="#d4b86a"/><stop offset="100%" stop-color="#e8d4a0"/></linearGradient>
+    <radialGradient id="crCrown" cx="48%" cy="45%" r="55%"><stop offset="0%" stop-color="#ff4d5a"/><stop offset="40%" stop-color="#e63946"/><stop offset="80%" stop-color="#c42832"/><stop offset="100%" stop-color="#a01a22"/></radialGradient>
+    <linearGradient id="crCrownFeather" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" stop-color="#b4232a"/><stop offset="100%" stop-color="#e63946" stop-opacity=".3"/></linearGradient>
+  </defs>
+  <ellipse cx="155" cy="115" rx="85" ry="65" fill="url(#crAura)"/>
+  <g id="wing-left"><path d="M146 110 C128 94,105 80,78 70 C55 63,32 59,10 66 C18 73,32 78,48 83 C68 89,92 96,114 103 C132 109,142 111,146 110Z" fill="url(#crWingL)" stroke="#444" stroke-width="0.5"/>
+  <path d="M10 66 C5 69,-2 75,-6 82 C0 83,6 81,12 79Z" fill="#1a1a1a" opacity=".8"/><path d="M18 67 C14 70,8 76,3 84 C9 84,15 82,21 80Z" fill="#252525" opacity=".65"/><path d="M27 68 C23 71,17 77,11 86 C17 86,23 83,29 81Z" fill="#383838" opacity=".5"/>
+  <path d="M37 70 C32 73,25 79,18 88 C24 88,31 85,38 82Z" fill="#4a4a4a" opacity=".4"/><path d="M48 72 C42 76,34 82,25 91 C31 91,39 87,47 84Z" fill="#5a5a5a" opacity=".32"/>
+  <path d="M60 75 C54 79,45 85,35 94 C41 93,49 89,58 86Z" fill="#7a7a7a" opacity=".28"/><path d="M73 78 C66 82,57 88,46 98 C52 96,61 91,71 88Z" fill="#999999" opacity=".22"/>
+  <path d="M88 82 C81 86,71 93,60 103 C67 101,76 96,87 92Z" fill="#bbbbbb" opacity=".18"/><path d="M104 86 C96 90,86 97,74 107 C81 104,90 99,102 94Z" fill="#dddddd" opacity=".14"/>
+  <path d="M120 92 C113 96,104 102,94 110 C102 107,112 102,122 98Z" fill="#eeeeee" opacity=".12"/>
+  <path d="M130 99 Q98 84 66 77" fill="none" stroke="#777" stroke-width=".45" opacity=".45"/><path d="M133 103 Q105 89 76 83" fill="none" stroke="#888" stroke-width=".38" opacity=".35"/><path d="M136 108 Q112 95 88 90" fill="none" stroke="#aaa" stroke-width=".3" opacity=".25"/>
+  <path d="M-6 82 L-9 87 L-2 84Z" fill="url(#crWingTip)" opacity=".7"/><path d="M3 84 L0 89 L6 86Z" fill="url(#crWingTip)" opacity=".6"/><path d="M11 86 L8 91 L15 88Z" fill="url(#crWingTip)" opacity=".5"/><path d="M18 88 L15 93 L22 89Z" fill="url(#crWingTip)" opacity=".35"/></g>
+  <g id="wing-right"><path d="M164 110 C182 94,205 80,232 70 C255 63,278 59,300 66 C292 73,278 78,262 83 C242 89,218 96,196 103 C178 109,168 111,164 110Z" fill="url(#crWingR)" stroke="#444" stroke-width="0.5"/>
+  <path d="M300 66 C305 69,312 75,316 82 C310 83,304 81,298 79Z" fill="#1a1a1a" opacity=".8"/><path d="M292 67 C296 70,302 76,307 84 C301 84,295 82,289 80Z" fill="#252525" opacity=".65"/><path d="M283 68 C287 71,293 77,299 86 C293 86,287 83,281 81Z" fill="#383838" opacity=".5"/>
+  <path d="M273 70 C278 73,285 79,292 88 C286 88,279 85,272 82Z" fill="#4a4a4a" opacity=".4"/><path d="M262 72 C268 76,276 82,285 91 C279 91,271 87,263 84Z" fill="#5a5a5a" opacity=".32"/>
+  <path d="M250 75 C256 79,265 85,275 94 C269 93,261 89,252 86Z" fill="#7a7a7a" opacity=".28"/><path d="M237 78 C244 82,253 88,264 98 C258 96,249 91,239 88Z" fill="#999999" opacity=".22"/>
+  <path d="M222 82 C229 86,239 93,250 103 C243 101,234 96,223 92Z" fill="#bbbbbb" opacity=".18"/><path d="M206 86 C214 90,224 97,236 107 C229 104,220 99,208 94Z" fill="#dddddd" opacity=".14"/>
+  <path d="M190 92 C197 96,206 102,216 110 C208 107,198 102,188 98Z" fill="#eeeeee" opacity=".12"/>
+  <path d="M170 99 Q202 84 234 77" fill="none" stroke="#777" stroke-width=".45" opacity=".45"/><path d="M167 103 Q195 89 224 83" fill="none" stroke="#888" stroke-width=".38" opacity=".35"/><path d="M164 108 Q188 95 212 90" fill="none" stroke="#aaa" stroke-width=".3" opacity=".25"/>
+  <path d="M316 82 L319 87 L312 84Z" fill="url(#crWingTip)" opacity=".7"/><path d="M307 84 L310 89 L304 86Z" fill="url(#crWingTip)" opacity=".6"/><path d="M299 86 L302 91 L295 88Z" fill="url(#crWingTip)" opacity=".5"/><path d="M292 88 L295 93 L288 89Z" fill="url(#crWingTip)" opacity=".35"/></g>
+  <ellipse cx="160" cy="128" rx="36" ry="24" fill="url(#crBody)" stroke="#ddd" stroke-width="0.45"/>
+  <ellipse cx="151" cy="121" rx="20" ry="13" fill="#fff" opacity=".5"/><ellipse cx="148" cy="119" rx="10" ry="6" fill="#fff" opacity=".3"/>
+  <path d="M128 144 Q160 160 192 144 Q198 152 190 158 Q160 172 130 158 Q122 150 128 144Z" fill="#ede8dc" stroke="#d0c8b8" stroke-width="0.4"/>
+  <ellipse cx="160" cy="136" rx="22" ry="10" fill="#faf6ee" opacity=".6"/>
+  <path d="M136 118 C124 108,112 92,108 76 C104 62,108 48,117 40 C126 33,140 32,148 42 C154 51,150 66,144 80 C139 92,141 106,148 116" fill="url(#crNeck)" stroke="#222" stroke-width="0.85"/>
+  <ellipse cx="134" cy="38" rx="15" ry="12" fill="#fefefa" stroke="#ccc" stroke-width="0.45"/><ellipse cx="131" cy="35" rx="8" ry="5" fill="#fff" opacity=".4"/>
+  <circle cx="129" cy="35" r="2.8" fill="#0a0a0a"/><circle cx="128.4" cy="34.3" r="1" fill="#fff" opacity=".7"/><circle cx="129.8" cy="35.5" r="0.4" fill="#fff" opacity=".5"/>
+  <path d="M121 38 Q112 40 105 38 Q112 37 121 38.5Z" fill="#c44a2a" stroke="#a33a1a" stroke-width="0.4"/><path d="M121 38.5 Q114 43 107 42 Q114 41 121 40Z" fill="#d45a3a" stroke="#b34a2a" stroke-width="0.3"/>
+  <path d="M135 27 Q140 19 148 22 Q143 30 138 33 Z" fill="url(#crCrown)" stroke="#a01a22" stroke-width="0.4"/><ellipse cx="141" cy="24" rx="3.5" ry="3" fill="#ff5a64" opacity=".7"/><ellipse cx="141" cy="24" rx="1.8" ry="1.5" fill="#fff" opacity=".4"/>
+  <path d="M145 24 Q153 15 161 18 Q154 26 148 30" fill="none" stroke="url(#crCrownFeather)" stroke-width="1" opacity=".55"/><path d="M147 27 Q156 19 163 22 Q156 29 150 32" fill="none" stroke="url(#crCrownFeather)" stroke-width="0.7" opacity=".35"/><path d="M143 30 Q150 24 156 26 Q151 31 146 33" fill="none" stroke="#c44a3a" stroke-width="0.5" opacity=".25"/>
+  <g id="tail-feathers"><path d="M128 152 Q114 170 92 186 Q110 176 127 158Z" fill="url(#crTail)" stroke="#2a3a5a" stroke-width="0.4" opacity=".6"/><path d="M137 156 Q126 177 110 195 Q126 181 138 162Z" fill="url(#crTail)" stroke="#2a3a5a" stroke-width="0.4" opacity=".52"/><path d="M147 157 Q140 180 134 200 Q145 184 149 163Z" fill="url(#crTail)" stroke="#2a3a5a" stroke-width="0.4" opacity=".45"/><path d="M156 157 Q156 180 156 202 Q159 185 159 163Z" fill="url(#crTail)" stroke="#2a3a5a" stroke-width="0.4" opacity=".42"/><path d="M166 157 Q174 179 188 196 Q177 183 168 163Z" fill="url(#crTail)" stroke="#2a3a5a" stroke-width="0.4" opacity=".5"/><path d="M176 155 Q190 172 206 188 Q194 176 179 159Z" fill="url(#crTail)" stroke="#2a3a5a" stroke-width="0.4" opacity=".56"/><path d="M186 151 Q204 165 222 176 Q206 167 189 154Z" fill="url(#crTail)" stroke="#2a3a5a" stroke-width="0.4" opacity=".62"/>
+  <path d="M92 186 L87 192 L96 188Z" fill="url(#crWingTip)" opacity=".6"/><path d="M110 195 L106 201 L114 196Z" fill="url(#crWingTip)" opacity=".5"/><path d="M134 200 L132 206 L138 200Z" fill="url(#crWingTip)" opacity=".4"/><path d="M156 202 L156 208 L160 201Z" fill="url(#crWingTip)" opacity=".4"/><path d="M188 196 L193 202 L189 194Z" fill="url(#crWingTip)" opacity=".5"/><path d="M206 188 L212 193 L207 185Z" fill="url(#crWingTip)" opacity=".6"/><path d="M222 176 L228 180 L221 173Z" fill="url(#crWingTip)" opacity=".55"/></g>
+  <line x1="146" y1="152" x2="142" y2="186" stroke="#4a4a4a" stroke-width="1.9" stroke-linecap="round"/><line x1="170" y1="150" x2="176" y2="184" stroke="#4a4a4a" stroke-width="1.9" stroke-linecap="round"/>
+  <path d="M138 186 L147 186 M142 186 L139 193 M142 186 L146 193 M142 186 L143 194" stroke="#3a3a3a" stroke-width="1.3" stroke-linecap="round"/>
+  <path d="M172 184 L181 184 M176 184 L173 191 M176 184 177 191 M176 184 L177 192" stroke="#3a3a3a" stroke-width="1.3" stroke-linecap="round"/>
+</svg>
+</div>
+    <div id="qiu-form">
+      <label for="q-input">所问之事（五十字内 · 留空则求今日一签）</label>
+      <textarea id="q-input" maxlength="50" placeholder="如：换工作顺利吗"></textarea>
+      <div id="q-count">已入 0 字</div>
+      <!-- P2 美术：签筒 -->
+      <div class="sign-cylinder-area">
+<svg class="sign-cylinder-svg" viewBox="0 0 100 145" xmlns="http://www.w3.org/2000/svg" aria-label="签筒">
+  <defs>
+    <linearGradient id="cylBody" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#152238"/><stop offset="20%" stop-color="#1a2a4a"/><stop offset="50%" stop-color="#223555"/><stop offset="80%" stop-color="#1a2a4a"/><stop offset="100%" stop-color="#152238"/></linearGradient>
+    <radialGradient id="cylInner" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#0d1520"/><stop offset="100%" stop-color="#1a2a4a"/></radialGradient>
+    <linearGradient id="goldRing" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#a07820"/><stop offset="30%" stop-color="#e8d4a0"/><stop offset="50%" stop-color="#c9a961"/><stop offset="70%" stop-color="#e8d4a0"/><stop offset="100%" stop-color="#a07820"/></linearGradient>
+    <linearGradient id="woodBase" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#3a2820"/><stop offset="30%" stop-color="#4a3528"/><stop offset="70%" stop-color="#3d2c22"/><stop offset="100%" stop-color="#2e1e16"/></linearGradient>
+    <linearGradient id="stickTop" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ede6d6"/><stop offset="50%" stop-color="#faf6ee"/><stop offset="100%" stop-color="#e8dcc8"/></linearGradient>
+  </defs>
+  <rect x="46" y="14" width="8" height="26" rx="1.5" fill="url(#stickTop)" stroke="#d4c4a8" stroke-width="0.6"/>
+  <rect x="45" y="14" width="10" height="6" rx="1.5" fill="url(#goldRing)" stroke="#a07820" stroke-width="0.4"/>
+  <line x1="50" y1="23" x2="50" y2="37" stroke="#c9a961" stroke-width="0.6" opacity=".4"/>
+  <path d="M24 38 L24 124 Q24 134 50 134 Q76 134 76 124 L76 38Z" fill="url(#cylBody)" stroke="#0d1520" stroke-width="1"/>
+  <ellipse cx="50" cy="38" rx="27" ry="10" fill="#2a3a5a" stroke="url(#goldRing)" stroke-width="1.2"/>
+  <ellipse cx="50" cy="39" rx="21" ry="7" fill="url(#cylInner)" opacity=".8"/>
+  <ellipse cx="50" cy="52" rx="25.5" ry="3" fill="none" stroke="url(#goldRing)" stroke-width="1.5"/>
+  <ellipse cx="50" cy="74" rx="25" ry="2.8" fill="none" stroke="url(#goldRing)" stroke-width="1.3"/>
+  <ellipse cx="50" cy="100" rx="24.5" ry="2.6" fill="none" stroke="url(#goldRing)" stroke-width="1.3"/>
+  <ellipse cx="50" cy="118" rx="24" ry="2.4" fill="none" stroke="url(#goldRing)" stroke-width="1.2"/>
+  <g opacity=".15" stroke="#e8d4a0" stroke-width="0.5" fill="none">
+    <path d="M34 62 h4 v4 h-4Z M34 66 h4 v4 h-4Z M40 62 h4 v4 h-4Z M40 66 h4 v4 h-4Z M46 62 h4 v4 h-4Z M46 66 h4 v4 h-4Z M52 62 h4 v4 h-4Z M52 66 h4 v4 h-4Z M58 62 h4 v4 h-4Z M58 66 h4 v4 h-4Z M64 62 h4 v4 h-4Z M64 66 h4 v4 h-4Z"/>
+    <path d="M34 84 h4 v4 h-4Z M34 88 h4 v4 h-4Z M40 84 h4 v4 h-4Z M40 88 h4 v4 h-4Z M46 84 h4 v4 h-4Z M46 88 h4 v4 h-4Z M52 84 h4 v4 h-4Z M52 88 h4 v4 h-4Z M58 84 h4 v4 h-4Z M58 88 h4 v4 h-4Z M64 84 h4 v4 h-4Z M64 88 h4 v4 h-4Z"/>
+  </g>
+  <path d="M18 129 Q18 140 50 140 Q82 140 82 129" fill="url(#woodBase)" stroke="#1a1010" stroke-width="0.8"/>
+  <rect x="14" y="129" width="72" height="7" rx="2" fill="url(#woodBase)" stroke="#2a1a10" stroke-width="0.6"/>
+  <rect x="14" y="129" width="72" height="2" rx="1" fill="url(#goldRing)" opacity=".5"/>
+  <path d="M28 45 L28 120" stroke="rgba(255,255,255,.04)" stroke-width="6" stroke-linecap="round"/>
+</svg>
+<div class="sign-stick-hint">诚心摇签 · 静候天机</div>
+</div>
+      <button id="btn-draw" class="btn-main">摇　签</button>
+    </div>
+    <div id="qiu-result"></div>
+    <!-- P2 美术：祥云分隔 -->
+    <div class="cloud-divider">
+      <svg viewBox="0 0 120 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M10 18 Q10 12 20 12 Q22 6 32 8 Q40 2 52 8 Q60 4 72 8 Q82 4 92 10 Q100 8 108 14 Q114 14 118 18 Q110 20 10 18Z" fill="#7a7060"/>
+      </svg>
+    </div>
+  </section>
+
+  <section id="view-huangli" class="view hidden"><div id="huangli-body"></div></section>
+
+  <section id="view-yueli" class="view hidden">
+    <div id="yueli-body"></div>
+    <div id="drawer" class="hidden"></div>
+  </section>
+
+  <div id="devpanel" class="hidden"></div>
+
+  <footer>起个卦 · 内容参考传统易学文化，仅供文化体验与自省之趣，人生大事请以理性与专业意见为准。记录仅存于本机浏览器。</footer>
+
+  <nav id="tabbar">
+    <a href="#/qiu" data-view="qiu">求签</a>
+    <a href="#/huangli" data-view="huangli">黄历</a>
+    <a href="#/yueli" data-view="yueli">月历</a>
+  </nav>
+</div>
+
+<script>
+(function(){
+"use strict";
+var BOOT_T0 = (typeof performance!=="undefined") ? performance.now() : 0;
+var HAS_DOM = (typeof document!=="undefined") && (typeof location!=="undefined");
+
+/* ==================== §CONFIG 全局参数区（口径热替换，只改这里） ====================
+   灰盒口径版本 v1.2（定稿）：
+   - 问事签：字数掺时辰 B方案（主理人仲裁，口径定稿 v1 §一）
+   - 判级：M5 七档矩阵（口径定稿 v1 §四，变卦不入判级）
+   - 每日一签：固定午时（时支数 7），日期纯函数
+   - 哈希：不掺（口径定稿 v1 §三） */
+var CONFIG = {
+  storeKey: "qigegua.v1",
+  schema: 1,
+  dailyHourBranch: 7,            // 午（子1…午7）
+  askGua: {
+    mode: "plusHourB",           // "plusHourB"=字数掺时辰（B方案·定稿）：上=前半%8，下=(后半+H)%8，动=(n+H)%6
+    oddRule: "frontHeavy",       // 奇数字数：前半=(n+1)/2
+    hashMix: false               // 哈希分化开关：定稿不掺
+  },
+  grade: {                       // M5 定稿矩阵（口径定稿 v1 §四）
+    relMod: {"用生体":2, "比和":1, "体克用":0, "体生用":-1, "用克体":-2},
+    wsVal:  {"旺":1, "相":0.5, "休":0, "囚":-0.5, "死":-1},
+    tiers: [["上上",2.5],["上",1.5],["中上",0.5],["中",-0.5],["中下",-1.0],["下",-2.0],["下下",-999]],
+    bianShift: "none"            // M5 定稿：变卦不入判级（转入解签第四槽位文案）
+  },
+  resolveTiers: ["中下","下","下下"],
+  midHint: "近日宜静养心神，遇疑多问一句再动。",
+  redrawHint: "此事卦已有答。同一问，卦不重起——且看今日时势如何。",
+  dailyDoneHint: "今日一签已求。卦不重起，心诚则灵。"
+};
+
+var TIERS = ["上上","上","中上","中","中下","下","下下"];
+var PERF = {drawMs:[], calMs:[], bootMs:0};
+
+/* ==================== §A Engine.calendar 历法（纯函数，无 DOM / 无 IO） ==================== */
+var GAN = "甲乙丙丁戊己庚辛壬癸";
+var ZHI = "子丑寅卯辰巳午未申酉戌亥";
+var LUNAR_INFO = [19416,19168,42352,21717,53856,55632,91476,22176,39632,21970,19168,42422,42192,53840,119381,46400,54944,44450,38320,84343,18800,42160,46261,27216,27968,109396,11104,38256,21234,18800,25958,54432,59984,28309,23248,11104,100067,37600,116951,51536,54432,120998,46416,22176,107956,9680,37584,53938,43344,46423,27808,46416,86869,19872,42416,83315,21168,43432,59728,27296,44710,43856,19296,43748,42352,21088,62051,55632,23383,22176,38608,19925,19152,42192,54484,53840,54616,46400,46752,103846,38320,18864,43380,42160,45690,27216,27968,44870,43872,38256,19189,18800,25776,29859,59984,27480,21952,43872,38613,37600,51552,55636,54432,55888,30034,22176,43959,9680,37584,51893,43344,46240,47780,44368,21977,19360,42416,86390,21168,43312,31060,27296,44368,23378,19296,42726,42208,53856,60005,54576,23200,30371,38608,19195,19152,42192,118966,53840,54560,56645,46496,22224,21938,18864,42359,42160,43600,111189,27936,44448,84835,37744,18936,18800,25776,92326,59984,27424,108228,43744,41696,53987,51552,54615,54432,55888,23893,22176,42704,21972,21200,43448,43344,46240,46758,44368,21920,43940,42416,21168,45683,26928,29495,27296,44368,84821,19296,42352,21732,53600,59752,54560,55968,92838,22224,19168,43476,41680,53584,62034,54560]; // 1900-2100 每年 1 项
+var LUNAR_BASE_JDN = 2415051;    // 1900-01-31 = 农历 1900 正月初一
+var JIEQI_BOUNDARY = [[1,6,"丑"],[2,4,"寅"],[3,6,"卯"],[4,5,"辰"],[5,6,"巳"],[6,6,"午"],[7,7,"未"],[8,8,"申"],[9,8,"酉"],[10,8,"戌"],[11,7,"亥"],[12,7,"子"]]; // 12 节近似表（±1 天，与参考引擎同口径）
+var LUNAR_MONTH_CN = "正二三四五六七八九十冬腊";
+var LUNAR_DAY_T = ["初","十","廿","三"];
+var LUNAR_DAY_U = ["十","一","二","三","四","五","六","七","八","九"];
+
+var CAL = {
+  leapMonth: function(y){ return LUNAR_INFO[y-1900] & 15; },
+  leapDays: function(y){ var l = LUNAR_INFO[y-1900] & 15; return l ? ((LUNAR_INFO[y-1900] & 65536) ? 30 : 29) : 0; },
+  monthDays: function(y,m){ return (LUNAR_INFO[y-1900] & (65536 >> m)) ? 30 : 29; },
+  lunarYearDays: function(y){
+    var total = 348, info = LUNAR_INFO[y-1900], bit = 32768;
+    for (var i=0;i<12;i++){ if (info & bit) total++; bit >>= 1; }
+    return total + this.leapDays(y);
+  },
+  jdn: function(y,m,d){ /* 公历→儒略日数（当日中午） */
+    var a = Math.floor((14-m)/12), yy = y+4800-a, mm = m+12*a-3;
+    return d + Math.floor((153*mm+2)/5) + 365*yy + Math.floor(yy/4) - Math.floor(yy/100) + Math.floor(yy/400) - 32045;
+  },
+  fromJdn: function(jdn){ /* 儒略日数→公历 */
+    var a = jdn+32044, b = Math.floor((4*a+3)/146097), c = a - Math.floor(146097*b/4),
+        d2 = Math.floor((4*c+3)/1461), e = c - Math.floor(1461*d2/4), m2 = Math.floor((5*e+2)/153);
+    return { y: 100*b+d2-4800+Math.floor(m2/10), m: m2+3-12*Math.floor(m2/10), d: e-Math.floor((153*m2+2)/5)+1 };
+  },
+  solarToLunar: function(y,m,d){ /* 越界 return null（UI 走降级提示分支） */
+    var offset = this.jdn(y,m,d) - LUNAR_BASE_JDN;
+    if (offset < 0) return null;
+    var ly = 1900;
+    while (ly <= 2100){ var days = this.lunarYearDays(ly); if (offset < days) break; offset -= days; ly++; }
+    if (ly > 2100) return null;
+    var leap = this.leapMonth(ly), lm = 1, isLeap = false;
+    while (lm <= 12){
+      var dd = (isLeap && lm === leap) ? this.leapDays(ly) : this.monthDays(ly, lm);
+      if (offset < dd) break;
+      offset -= dd;
+      if (leap && lm === leap && !isLeap){ isLeap = true; }
+      else { isLeap = false; lm++; }
+    }
+    if (lm > 12) return null;
+    return { y: ly, m: lm, d: offset+1, leap: isLeap };
+  },
+  lunarToSolar: function(ly,lm,ld,isLeap){
+    var offset = 0, y, mth;
+    for (y=1900; y<ly; y++) offset += this.lunarYearDays(y);
+    var leap = this.leapMonth(ly);
+    for (mth=1; mth<lm; mth++){ offset += this.monthDays(ly,mth); if (leap && mth===leap) offset += this.leapDays(ly); }
+    if (isLeap && leap===lm) offset += this.monthDays(ly,lm);
+    offset += ld-1;
+    return this.fromJdn(LUNAR_BASE_JDN + offset);
+  },
+  yearGanzhi: function(y,m,d){ /* 年柱：立春(约2/4 硬编码近似)分界 */
+    var yy = y; if (m < 2 || (m === 2 && d < 4)) yy -= 1;
+    var idx = ((yy-4) % 60 + 60) % 60;
+    return { g: GAN[idx%10], z: ZHI[idx%12] };
+  },
+  dayGanzhi: function(jdn){ /* 日柱：锚点 2000-01-01=戊午，即 (jdn+49)%60 */
+    var idx = (jdn+49) % 60;
+    return { g: GAN[idx%10], z: ZHI[idx%12] };
+  },
+  hourGanzhi: function(dayGan, hour){ /* 时柱：五鼠遁；23:00-00:59 为子 */
+    var bi = Math.floor((hour+1)/2) % 12;
+    var base = {"甲":0,"己":0,"乙":2,"庚":2,"丙":4,"辛":4,"丁":6,"壬":6,"戊":8,"癸":8}[dayGan];
+    return { g: GAN[(base+bi)%10], z: ZHI[bi] };
+  },
+  monthGanzhi: function(yearGan, monthBranch){ /* 月柱：五虎遁 */
+    var mi = ZHI.indexOf(monthBranch), off = ((mi-2)%12+12)%12;
+    var base = (GAN.indexOf(yearGan)*2+2) % 10;
+    return { g: GAN[(base+off)%10], z: monthBranch };
+  },
+  solarMonthBranch: function(m,d){ /* 节气月支（近似表，与参考引擎逐字节同口径） */
+    var result = "子";
+    for (var i=0;i<12;i++){
+      var jb = JIEQI_BOUNDARY[i];
+      if (m > jb[0] || (m === jb[0] && d >= jb[1])) result = jb[2];
+    }
+    if (m > 12 || (m === 12 && d >= 7)) result = "子";
+    if (m === 1 && d < 6) result = "子";
+    return result;
+  },
+  xunkong: function(dg,dz){ /* 旬空两支 */
+    var idx = -1;
+    for (var i=0;i<60;i++){ if (GAN[i%10]===dg && ZHI[i%12]===dz){ idx=i; break; } }
+    if (idx < 0) return "";
+    var xs = Math.floor(idx/10)*10;
+    return ZHI[(xs+10)%12] + ZHI[(xs+11)%12];
+  },
+  lunarDayName: function(d){
+    if (d === 10) return "初十";
+    if (d === 20) return "二十";
+    if (d === 30) return "三十";
+    return LUNAR_DAY_T[Math.floor(d/10)] + LUNAR_DAY_U[d%10];
+  },
+  lunarMonthName: function(m,leap){ return (leap?"闰":"") + LUNAR_MONTH_CN[m-1] + "月"; },
+  inRange: function(y,m,d){ return this.solarToLunar(y,m,d) !== null; }
+};
+
+/* ==================== §B Engine.meihua 起卦 / 排盘 / 判级（纯函数） ==================== */
+var GUA_NAME = {1:"乾",2:"兑",3:"离",4:"震",5:"巽",6:"坎",7:"艮",8:"坤"};
+var GUA_SYMBOL = {1:"☰",2:"☱",3:"☲",4:"☳",5:"☴",6:"☵",7:"☶",8:"☷"};
+var GUA_WUXING = {1:"金",2:"金",3:"火",4:"木",5:"木",6:"水",7:"土",8:"土"};
+var GUA_DIR = {1:"西北",2:"西",3:"南",4:"东",5:"东南",6:"北",7:"东北",8:"西南"};
+var GUA_BRANCH = {1:["戌","亥"],2:["酉"],3:["午"],4:["卯"],5:["辰","巳"],6:["子"],7:["丑","寅"],8:["未","申"]};
+var TRIGRAM_BITS = {1:[1,1,1],2:[1,1,0],3:[1,0,1],4:[1,0,0],5:[0,1,1],6:[0,1,0],7:[0,0,1],8:[0,0,0]};
+var BITS_TO_GUA = {};
+(function(){ for (var k in TRIGRAM_BITS){ BITS_TO_GUA[TRIGRAM_BITS[k].join(",")] = +k; } })();
+var HEX_NAME = { /* HEX_NAME[上][下] = [卦名, 周易卦序] */
+ 1:{1:["乾为天",1],2:["天泽履",10],3:["天火同人",13],4:["天雷无妄",25],5:["天风姤",44],6:["天水讼",6],7:["天山遁",33],8:["天地否",12]},
+ 2:{1:["泽天夬",43],2:["兑为泽",58],3:["泽火革",49],4:["泽雷随",17],5:["泽风大过",28],6:["泽水困",47],7:["泽山咸",31],8:["泽地萃",45]},
+ 3:{1:["火天大有",14],2:["火泽睽",38],3:["离为火",30],4:["火雷噬嗑",21],5:["火风鼎",50],6:["火水未济",64],7:["火山旅",56],8:["火地晋",35]},
+ 4:{1:["雷天大壮",34],2:["雷泽归妹",54],3:["雷火丰",55],4:["震为雷",51],5:["雷风恒",32],6:["雷水解",40],7:["雷山小过",62],8:["雷地豫",16]},
+ 5:{1:["风天小畜",9],2:["风泽中孚",61],3:["风火家人",37],4:["风雷益",42],5:["巽为风",57],6:["风水涣",59],7:["风山渐",53],8:["风地观",20]},
+ 6:{1:["水天需",5],2:["水泽节",60],3:["水火既济",63],4:["水雷屯",3],5:["水风井",48],6:["坎为水",29],7:["水山蹇",39],8:["水地比",8]},
+ 7:{1:["山天大畜",26],2:["山泽损",41],3:["山火贲",22],4:["山雷颐",27],5:["山风蛊",18],6:["山水蒙",4],7:["艮为山",52],8:["山地剥",23]},
+ 8:{1:["地天泰",11],2:["地泽临",19],3:["地火明夷",36],4:["地雷复",24],5:["地风升",46],6:["地水师",7],7:["地山谦",15],8:["坤为地",2]}
+};
+var SHENG = {"金":"水","水":"木","木":"火","火":"土","土":"金"};
+var KE   = {"金":"木","木":"土","土":"水","水":"火","火":"金"};
+var WANGSHUAI = {
+ "寅":{"木":"旺","火":"相","水":"休","金":"囚","土":"死"}, "卯":{"木":"旺","火":"相","水":"休","金":"囚","土":"死"},
+ "巳":{"火":"旺","土":"相","木":"休","水":"囚","金":"死"}, "午":{"火":"旺","土":"相","木":"休","水":"囚","金":"死"},
+ "申":{"金":"旺","水":"相","土":"休","火":"囚","木":"死"}, "酉":{"金":"旺","水":"相","土":"休","火":"囚","木":"死"},
+ "亥":{"水":"旺","木":"相","金":"休","土":"囚","火":"死"}, "子":{"水":"旺","木":"相","金":"休","土":"囚","火":"死"},
+ "辰":{"土":"旺","金":"相","火":"休","木":"囚","水":"死"}, "戌":{"土":"旺","金":"相","火":"休","木":"囚","水":"死"},
+ "丑":{"土":"旺","金":"相","火":"休","木":"囚","水":"死"}, "未":{"土":"旺","金":"相","火":"休","木":"囚","水":"死"}
+};
+var CHANGSHENG = ["长生","沐浴","冠带","临官","帝旺","衰","病","死","墓","绝","胎","养"];
+var CHANGSHENG_START = {"金":"巳","木":"亥","水":"申","火":"寅","土":"申"};
+var YIMA = {"申":"寅","子":"寅","辰":"寅","寅":"申","午":"申","戌":"申","巳":"亥","酉":"亥","丑":"亥","亥":"巳","卯":"巳","未":"巳"};
+var TAOHUA = {"申":"酉","子":"酉","辰":"酉","寅":"卯","午":"卯","戌":"卯","巳":"午","酉":"午","丑":"午","亥":"子","卯":"子","未":"子"};
+var RILU = {"甲":"寅","乙":"卯","丙":"巳","戊":"巳","丁":"午","己":"午","庚":"申","辛":"酉","壬":"亥","癸":"子"};
+var YUEDE = {"寅":"丙","午":"丙","戌":"丙","申":"壬","子":"壬","辰":"壬","亥":"甲","卯":"甲","未":"甲","巳":"庚","酉":"庚","丑":"庚"};
+var RSCORE = {"用生体":2,"比和":1,"体克用":0,"体生用":-1,"用克体":-2};
+
+function linesOf(upper, lower){ return TRIGRAM_BITS[lower].concat(TRIGRAM_BITS[upper]); }
+function bitsToGua(bits){ return BITS_TO_GUA[bits[0]+","+bits[1]+","+bits[2]]; }
+function hexOf(upper, lower){ return HEX_NAME[upper][lower]; }
+
+var MEI = {
+  zhiIdx: function(z){ return ZHI.indexOf(z); },
+  numOf: function(name){ for (var k in GUA_NAME){ if (GUA_NAME[k]===name) return +k; } return 0; },
+  elementGenerating: function(wx){ for (var k in SHENG){ if (SHENG[k]===wx) return k; } return null; },   // 生 wx 者
+  elementConquering: function(wx){ for (var k in KE){ if (KE[k]===wx) return k; } return null; },         // 克 wx 者
+  huGua: function(lines){ return { u: bitsToGua([lines[2],lines[3],lines[4]]), l: bitsToGua([lines[1],lines[2],lines[3]]) }; },
+  bianGua: function(lines, moving){ var nl = lines.slice(); nl[moving-1] ^= 1; return { u: bitsToGua(nl.slice(3,6)), l: bitsToGua(nl.slice(0,3)) }; },
+  cuoGua: function(lines){ return { u: bitsToGua([1-lines[3],1-lines[4],1-lines[5]]), l: bitsToGua([1-lines[0],1-lines[1],1-lines[2]]) }; },
+  zongGua: function(lines){ var rv = lines.slice().reverse(); return { u: bitsToGua(rv.slice(3,6)), l: bitsToGua(rv.slice(0,3)) }; },
+  wuxingRelation: function(tiWx, yongWx){
+    if (tiWx === yongWx) return ["比和","吉"];
+    if (SHENG[yongWx] === tiWx) return ["用生体","吉"];
+    if (SHENG[tiWx] === yongWx) return ["体生用","小凶（耗）"];
+    if (KE[tiWx] === yongWx) return ["体克用","中吉（费力）"];
+    if (KE[yongWx] === tiWx) return ["用克体","凶"];
+    return ["未知","—"];
+  },
+  wangshuaiOf: function(wx, mb){ return (WANGSHUAI[mb]||{})[wx] || "—"; },
+  changshengOf: function(wx, branch){
+    var start = CHANGSHENG_START[wx];
+    if (!start || ZHI.indexOf(branch) < 0) return "—";
+    return CHANGSHENG[(ZHI.indexOf(branch)-ZHI.indexOf(start)+12) % 12];
+  },
+  qiguaByTime: function(yb, lm, ld, hb){ /* 年支数+农历月+农历日 → 上卦；+时支数 → 下卦/动爻 */
+    var s1 = yb+lm+ld, s2 = s1+hb;
+    return { u: s1%8 || 8, l: s2%8 || 8, m: s2%6 || 6 };
+  },
+  qiguaByCharsPlusHour: function(n, hb){ /* 字数掺时辰（v0 仲裁口径，CONFIG 备用） */
+    var s = n+hb;
+    return { u: n%8 || 8, l: s%8 || 8, m: s%6 || 6 };
+  },
+  qiguaByCharsHalf: function(n){ /* 纯字数前半/后半拆分（v1.1 旧默认）；奇数前半多一字 */
+    var a = Math.ceil(n/2), b = Math.floor(n/2);
+    return { u: a%8 || 8, l: b%8 || 8, m: n%6 || 6 };
+  },
+  qiguaByCharsPlusHourB: function(n, hb){ /* 字数掺时辰 B方案（定稿·口径定稿 v1 §一）：
+    上卦=前半字数a%8，下卦=(后半字数b+时支数H)%8，动爻=(总字数n+H)%6 */
+    var a = Math.ceil(n/2), b = Math.floor(n/2);
+    return { u: a%8 || 8, l: (b + hb)%8 || 8, m: (n + hb)%6 || 6 };
+  },
+  qiguaByNumbers: function(nums){ /* 三数式（对拍用）：1上 2下 3动 */
+    var a=nums[0], b=nums[1], c=nums[2];
+    return { u: a%8 || 8, l: b%8 || 8, m: c%6 || 6 };
+  },
+  paipan: function(upper, lower, moving){ /* 完整排盘，键名与参考引擎逐字段对齐（对拍用） */
+    var lines = linesOf(upper, lower);
+    var hu = this.huGua(lines), bi = this.bianGua(lines, moving), cuo = this.cuoGua(lines), zong = this.zongGua(lines);
+    var tiGua, yongGua, tiPos, yongPos;
+    if (moving <= 3){ tiGua = upper; yongGua = lower; tiPos = "上卦"; yongPos = "下卦"; }
+    else { tiGua = lower; yongGua = upper; tiPos = "下卦"; yongPos = "上卦"; }
+    var yongBian = (moving <= 3) ? bi.l : bi.u;
+    var tiBian   = (moving <= 3) ? bi.u : bi.l;
+    var tiWx = GUA_WUXING[tiGua], yongWx = GUA_WUXING[yongGua], yongBianWx = GUA_WUXING[yongBian];
+    var relMain = this.wuxingRelation(tiWx, yongWx), relBian = this.wuxingRelation(tiWx, yongBianWx);
+    function guaBlk(u,l){ var h = hexOf(u,l); return {"上卦":GUA_NAME[u],"下卦":GUA_NAME[l],"卦名":h[0],"卦序":h[1]}; }
+    return {
+      "本卦": guaBlk(upper,lower),
+      "动爻": moving,
+      "互卦": guaBlk(hu.u,hu.l),
+      "变卦": guaBlk(bi.u,bi.l),
+      "错卦": guaBlk(cuo.u,cuo.l),
+      "综卦": guaBlk(zong.u,zong.l),
+      "体用": {
+        "体卦": GUA_NAME[tiGua], "体卦位置": tiPos, "体卦五行": tiWx,
+        "用卦": GUA_NAME[yongGua], "用卦位置": yongPos, "用卦五行": yongWx,
+        "变卦用卦": GUA_NAME[yongBian], "变卦用卦五行": yongBianWx, "变卦体卦": GUA_NAME[tiBian],
+        "主卦关系": relMain[0], "主卦吉凶": relMain[1],
+        "变卦关系": relBian[0], "变卦吉凶": relBian[1]
+      },
+      "互卦五行": {"上卦五行": GUA_WUXING[hu.u], "下卦五行": GUA_WUXING[hu.l]},
+      "辅助信息": {}
+    };
+  },
+  enrich: function(pan, mb, dg, dz){ /* 旺衰/空亡/神煞（写入 pan.辅助信息） */
+    var t = pan["体用"], tiWx = t["体卦五行"], yongWx = t["用卦五行"], a = pan["辅助信息"];
+    if (mb){
+      a["月支"] = mb;
+      a["体卦旺衰"] = this.wangshuaiOf(tiWx, mb);
+      a["用卦旺衰"] = this.wangshuaiOf(yongWx, mb);
+      a["体卦长生"] = this.changshengOf(tiWx, mb);
+      a["用卦长生"] = this.changshengOf(yongWx, mb);
+      a["月德"] = YUEDE[mb] || "—";
+    }
+    if (dg && dz){
+      var kong = CAL.xunkong(dg, dz);
+      a["日柱"] = dg + dz;
+      a["旬空"] = kong;
+      var kongGua = [], self = this;
+      [["体卦", t["体卦"]], ["用卦", t["用卦"]]].forEach(function(pair){
+        var num = self.numOf(pair[1]);
+        if (GUA_BRANCH[num].some(function(b){ return kong.indexOf(b) >= 0; })) kongGua.push(pair[0]+"("+pair[1]+")");
+      });
+      a["落空之卦"] = kongGua.length ? kongGua : ["无"];
+      a["驿马"] = YIMA[dz] || "—";
+      a["桃花"] = TAOHUA[dz] || "—";
+      a["日禄"] = RILU[dg] || "—";
+    }
+    return pan;
+  }
+};
+
+/* ---- 判级 M5 定稿（口径定稿 v1 §四）----
+   s = 体用关系分 + 体卦旺衰值（旺衰只看体卦，经典梅花以体为主）
+   关系分：用生体+2 / 比和+1 / 体克用0 / 体生用-1 / 用克体-2
+   旺衰值：旺+1 / 相+0.5 / 休0 / 囚-0.5 / 死-1
+   七档：s≥+2.5→上上 | ≥+1.5→上 | ≥+0.5→中上 | ≥-0.5→中 | ≥-1.0→中下 | ≥-2.0→下 | <-2.0→下下
+   变卦不入判级（转入解签第四槽位文案） ---- */
+function tierOfM5(s){
+  var ts = CONFIG.grade.tiers;
+  for (var i=0;i<ts.length;i++){ if (s >= ts[i][1]) return i; }
+  return ts.length-1;
+}
+function gradeDraw(base, relMain, wsTi, wsYong, relBian){
+  /* base(签文基准分) 在 M5 中不参与判级，保留参数接口兼容；wsYong/relBian 在 M5 中不用 */
+  var g = CONFIG.grade;
+  var s = (g.relMod[relMain]||0) + (g.wsVal[wsTi]||0);
+  var lv = tierOfM5(s);
+  /* M5 定稿：bianShift="none"，变卦不入判级 */
+  return { index: Math.round(s * 10) / 10, tier: TIERS[lv], score: s };
+}
+
+/* ==================== §C Engine.huangli 建除十二神 / 宜忌 / 五行穿衣（纯函数） ==================== */
+var SHIERSHEN = ["建","除","满","平","定","执","破","危","成","收","开","闭"];
+var SHEN_YIJI = { /* TODO(内容定稿)：占位规则表，细则由内容侧定稿 */
+ "建":{yi:"出行、赴任、会见贵人",ji:"动土、开仓"},
+ "除":{yi:"扫舍、沐浴、除旧布新",ji:"开市、嫁娶"},
+ "满":{yi:"祈福、开市、交易、纳财",ji:"服药、上任"},
+ "平":{yi:"修整、协议、和解",ji:"词讼、动土"},
+ "定":{yi:"订盟、嫁娶、立券、入学",ji:"诉讼、远行"},
+ "执":{yi:"造屋、结网、捕捉",ji:"搬家、远行"},
+ "破":{yi:"破屋、拆卸、求医治病",ji:"嫁娶、开市、签约"},
+ "危":{yi:"安床、祭祀、静养",ji:"登高、行船"},
+ "成":{yi:"开市、入学、嫁娶、入宅",ji:"词讼、争斗"},
+ "收":{yi:"收获、纳财、入宅、置产",ji:"放债、丧葬"},
+ "开":{yi:"开市、动土、见贵、求职",ji:"安葬、破土"},
+ "闭":{yi:"安葬、筑堤、修补垣墙",ji:"开市、出行、嫁娶"}
+};
+var CHONG_ZODIAC = {"子":"鼠","丑":"牛","寅":"虎","卯":"兔","辰":"龙","巳":"蛇","午":"马","未":"羊","申":"猴","酉":"鸡","戌":"狗","亥":"猪"};
+var ZODIAC_OF = {"子":"鼠","丑":"牛","寅":"虎","卯":"兔","辰":"龙","巳":"蛇","午":"马","未":"羊","申":"猴","酉":"鸡","戌":"狗","亥":"猪"};
+var LIUCHONG = {"子":"午","丑":"未","寅":"申","卯":"酉","辰":"戌","巳":"亥","午":"子","未":"丑","申":"寅","酉":"卯","戌":"辰","亥":"巳"};
+var SHA_FANG = {"子":"南","辰":"南","申":"南","寅":"北","午":"北","戌":"北","巳":"东","酉":"东","丑":"东","亥":"西","卯":"西","未":"西"};
+var WX_COLORS = { /* 国风雅色版（占位色块，P2 美术定稿） */
+ "金":[["月白","#eceae2"],["银灰","#b9bdc4"]],
+ "木":[["青碧","#5f8a72"],["竹绿","#7a9a6d"]],
+ "水":[["黛蓝","#2e4a6b"],["墨青","#23262d"]],
+ "火":[["朱赤","#a63a3a"],["绛红","#7e3b47"]],
+ "土":[["赭黄","#b98a3e"],["米驼","#a9906e"]]
+};
+var TIER_COLOR = {"上上":"#c9a227","上":"#d4a574","中上":"#5a8a76","中":"#b98a3e","中下":"#3a5a7a","下":"#454a52","下下":"#22262d"};
+
+var HL = {
+  jianchu: function(dayZhi, monthBranch){
+    var d = (ZHI.indexOf(dayZhi) - ZHI.indexOf(monthBranch)) % 12;
+    if (d < 0) d += 12;
+    return SHIERSHEN[d];
+  },
+  chongsha: function(dayZhi){
+    var c = LIUCHONG[dayZhi];
+    return { chong: c + ZODIAC_OF[c], sha: SHA_FANG[dayZhi] };
+  },
+  dayGanWuxing: function(dg){ return {"甲":"木","乙":"木","丙":"火","丁":"火","戊":"土","己":"土","庚":"金","辛":"金","壬":"水","癸":"水"}[dg]; },
+  dressGuide: function(dg){ /* 架构案 §4.3 通行口径：以当日日干五行 N 为基准 */
+    var n = this.dayGanWuxing(dg);
+    return {
+      "大吉": { rel: "生" + n + "（印）", colors: WX_COLORS[MEI.elementGenerating(n)] },
+      "次吉": { rel: n + "比和", colors: WX_COLORS[n] },
+      "一般": { rel: n + "所克（财）", colors: WX_COLORS[KE[n]] },
+      "慎用": { rel: "克" + n, colors: WX_COLORS[MEI.elementConquering(n)] },
+      "不宜": { rel: n + "所生（泄）", colors: WX_COLORS[SHENG[n]] }
+    };
+  }
+};
+
+/* ==================== §D Content 签文库 / 槽位词典 / 化解库（纯数据） ==================== */
+/* 全量签库 64 支 · v2.0（种子签10支 + 补充签54支，game-design-director 产）
+   字段：{no,name,theme,base,poem,jie,hua}；动态槽位/穿衣/方位不入库（全局词典+五行映射） */
+var SIGN_LIB = [
+ {no:1,  name:"乾为天", theme:"潜龙待时", base:68,
+  poem:"潜龙初九未上天，云行雨施在眼前。\n君子终日乾乾惕，或跃在渊利见贤。",
+  jie:"这是一支阳气升腾的签。所问之事有大格局、有冲劲，但眼下还差一个\u201c时机\u201d或\u201c贵人\u201d。不用急——龙在渊中不是被困，是在蓄力。先把手上的事做扎实，等云行雨施的那一刻。",
+  hua:"今天为所问之事做一件小准备——查一份资料、发一条消息、列一张清单，把\u201c蓄力\u201d落在手上"},
+ {no:2,  name:"坤为地", theme:"厚德载物", base:66,
+  poem:"大地无言载万物，\n含弘光大德不孤。\n牝马行地终致远，\n直方大兮福自扶。",
+  jie:"这是一支承载与包容的签。所问之事需要你像大地一样——不争、不急，但一直在托着。眼下不是冲刺的时候，是扎根的时候。把基础打牢、把关系处稳，「厚德」本身就是最大的竞争力。机会会来找有承载力的人。",
+  hua:"今天做一件「托底」的事——帮一个人、还一个愿、整理一处空间。你在承载什么，什么就会回来找你"},
+ {no:3,  name:"水雷屯", theme:"萌芽破土", base:46,
+  poem:"雷动云屯草木生，\n利建侯而不利行。\n磐桓利居贞勿往，\n十年乃字志初成。",
+  jie:"这支签说的是「万事开头难」。你问的事方向对，但还在萌芽阶段——就像种子刚顶破土皮，外面风大雨大，根还没扎稳。别急着要结果，现在最重要的是「活下去」。先活过这个阶段，后面自然顺畅。",
+  hua:"今天为这件事做一件最小但最确定的小事——写下一行字、发一条消息、存一笔钱。萌芽不需要惊天动地，只需要不断活着"},
+ {no:4,  name:"山水蒙", theme:"破蒙问路", base:52,
+  poem:"山下出泉未知津，雾里行人问路频。\n匪我求童蒙求我，一击明鼓破迷云。",
+  jie:"这支签说的是\u201c看不清\u201d。心里的事雾气正浓——不是路不对，是还没遇到\u201c对的信息\u201d或\u201c懂的人\u201d。蒙卦古训：不是你追答案，是答案来就你。先把该做的做扎实，请教要找对人。",
+  hua:"三日内找一位真正懂行的人请教一次，或认真读透一份相关资料——雾不是风吹散的，是路走出来的"},
+ {no:5,  name:"水天需", theme:"待时而动", base:50,
+  poem:"云上于天待时行，饮食宴乐养其诚。\n需于郊沙虽小滞，光亨贞吉利涉川。",
+  jie:"云已升到天上，雨还没落——时机在酝酿，但还没到。所问之事方向是对的，眼下却是\u201c等\u201d字当头：不是不动，是把等待本身变成准备。把身心养好，大川在前，等船来。",
+  hua:"今天给自己安排一件滋养的小事——好好吃一顿饭、早睡一次、散步半小时。船到时，你要有力气上"},
+ {no:6,  name:"天水讼", theme:"止讼息争", base:38,
+  poem:"天与水违行不同，\n讼元终凶惕中公。\n食旧德复即命吉，\n见龙在田讼自空。",
+  jie:"这是一支关于「冲突」的签。你问的事里可能藏着一段争执、一场博弈或一次对立面碰撞。讼卦的核心告诫是：争到底没有赢家。如果能退一步、让一分、换个说法，比赢更重要。「止讼」不是认输，是止损。",
+  hua:"今天主动给一个跟你有分歧的人递一句话——不是认错，是「我听到了」。一句话能熄的火，别让它烧成灾"},
+ {no:7,  name:"地水师", theme:"出师有道", base:44,
+  poem:"地中有水师出律，\n君子以容民畜众。\n丈人吉无咎行正，\n师出以律失则凶。",
+  jie:"这支签讲的是「带队伍/做大事」的逻辑。你所问之事可能涉及协调多人、推进一个项目或面对一场需要组织的挑战。关键不在个人能力，在「纪律」和「正道」——规矩立好了，人心齐了，事就能成。切忌独断专行。",
+  hua:"今天列一张「三件事清单」——这件事最关键的三个执行节点是什么。师卦贵在「律」，有章法才不会乱"},
+ {no:8,  name:"水地比", theme:"亲比同心", base:54,
+  poem:"地上有水比无疆，\n原筮元永贞不亡。\n不宁方来后夫凶，\n亲比同心道自昌。",
+  jie:"这是一支讲「团结」的签。所问之事的突破口不在你一个人多强，在于能不能找到盟友、拉到同路人。「比」就是亲近、依附、合作。现在是你主动伸手的好时机——别等别人来凑你，你去凑别人，反而更主动。",
+  hua:"今天主动联系一位能帮到你的人——不用谈正事，就问候一句。关系的温度，靠的是「常联系」而不是「有事才找」"},
+ {no:9,  name:"风天小畜", theme:"密云不雨", base:48,
+  poem:"风行天上小畜积，\n密云不雨尚在西。\n复自道何其咎？\n牵复吉兮德不迷。",
+  jie:"这支签说的是「差一点」。云已经密了，雨还没下来——你做的事能量在积蓄，但出口还没打开。这不是坏事，是「蓄」的过程。小畜之卦，贵在「小」：从小处着手、从近处开始，不要想一口吃成胖子。",
+  hua:"今天把这件事拆成三件小事，做完其中最小的一件。小畜的意思就是：大事做不了的时候，先把小的养肥"},
+ {no:10, name:"天泽履", theme:"履险如夷", base:50,
+  poem:"上天下泽履虎尾，\n不咥人亨礼初偕。\n素履往无咎行正，\n视履考祥旋福来。",
+  jie:"这是一支关于「小心走路」的签。你面前有一条路，看起来有点险（像踩老虎尾巴），但其实只要步子稳、态度正，老虎不咬人。关键在「礼」——守规则、知分寸、不越界。不是不能走，是不能莽撞地走。",
+  hua:"今天在做这件相关的事之前，先花五分钟检查一遍「有没有漏掉的细节」。履卦的智慧全在「看清楚了再迈腿」"},
+ {no:11, name:"地天泰", theme:"三阳开泰", base:70,
+  poem:"天地交泰万物通，小往大来正道中。\n拔茅连茹汇众力，三阳开泰处处春。",
+  jie:"上下相通、内外相和之局。所问之事眼下通路是打开的：人心顺、信息通、资源在靠拢。此时宜借助合力，不必单打独斗。也要记得\u201c泰极防否\u201d——顺境里最该守的是分寸。",
+  hua:"三日内主动联络一位许久未通的旧识或前辈——一通气血，百事皆顺"},
+ {no:12, name:"天地否", theme:"否极泰来", base:34,
+  poem:"天地不交否闭塞，\n大人否亨俭德辟。\n包羞承羞且自守，\n倾否先否后泰籍。",
+  jie:"这是一支低位的签，不骗你。否卦意味着「天地隔绝、阴阳不通」——你问的事目前处于阻塞状态，推不动、说不通、合不来。但易经的智慧是：否到极致就是泰的前奏。现在要做的只有一件事——「俭德辟难」，收缩、静默、等待。",
+  hua:"今天给自己设一个「禁言时段」——两小时内不谈此事、不做决定、不发消息。否卦最忌「乱动」，不动就是最好的动"},
+ {no:13, name:"天火同人", theme:"志同道合", base:64,
+  poem:"天与火同人于野，\n君子以类族辨物。\n同人于门无咎行，\n先号咷而后笑悦。",
+  jie:"这是一支非常温暖的签！同人卦讲的是「找到自己人」。你问的事，答案很可能藏在某个人身上——一个志同道合的伙伴、一位懂你的前辈、一群和你一样想法的人。不要单打独斗了，出去找人，「同人」的力量远超你想象。",
+  hua:"今天参加一个与你所问之事相关的社群/群组/活动，或者主动约一位同行聊一聊。同人的第一步，是让自己「被看见」"},
+ {no:14, name:"火天大有", theme:"满而不溢", base:66,
+  poem:"丽日当天万象明，大车以载积中诚。\n厥孚交如威如吉，满而不溢自天成。",
+  jie:"火在天上，光明普照——这是一支丰盈的签。所问之事有\u201c大成\u201d的气象，但大有之要义在\u201c有而不满\u201d：收获越大，越要低调扎实、讲诚信。财与名都会来，守住\u201c分享\u201d与\u201c谦逊\u201d，就能长保。",
+  hua:"近日所得，记得分一份出去——请一顿饭、帮一次忙、说一句谢。散财聚人，福才留得住"},
+ {no:15, name:"地山谦", theme:"卑以自牧", base:62,
+  poem:"山藏地中德愈尊，卑以自牧福自臻。\n鸣谦贞吉众所附，君子撝谦万事亨。",
+  jie:"山本高于地，却把自己藏在地下——这是六十四卦里唯一六爻皆吉的卦。所问之事不必争一时锋芒：把姿态放低、把事做实，眼下看似慢，实则\u201c谦尊而光\u201d，人脉与机会会自己聚过来。",
+  hua:"今天遇到可争可不争的场合，试着让一步、晚一句、多听三分——静观其变"},
+ {no:16, name:"雷地豫", theme:"悦以先人", base:58,
+  poem:"雷出地奋豫作乐，\n先王以乐崇德博。\n鸣豫凶兮介石吉，\n由豫大有得归壑。",
+  jie:"这是一支关于「准备与时机」的签。豫字既是「愉悦」也是「预备/犹豫」——你问的事正在酝酿一个好结果，但还没完全到位。关键是「先人」：比别人早一步准备、早一步布局。当你准备好了，机会一来就能接住。但注意别太早庆祝——「鸣豫」（提前吹嘘）反而不吉利。",
+  hua:"今天为即将到来的机会做一件「预习」的事——查资料、练技能、备方案。豫的本质是「乐在预备之中」"},
+ {no:17, name:"泽雷随", theme:"从善如流", base:60,
+  poem:"泽中有雷随元亨，\n天下随时大矣哉。\n官有渝贞吉出门，\n随有获值道不埋。",
+  jie:"这支签的核心是一个「随」字——跟随、顺应、不固执。你问的事，最好的策略可能不是硬冲，而是观察趋势、跟随对的信号、顺势而为。随卦特别提醒：「随」不是没主见，是知道什么时候该听别人的、什么时候该跟着形势走。",
+  hua:"今天做一件「逆着自己第一反应」的事——如果本能想拒绝，就听听；如果本能想冲，就等等。随的功夫，在「不执着于自己的判断」"},
+ {no:18, name:"山风蛊", theme:"振弊除腐", base:42,
+  poem:"山下有风蛊坏极，\n先王以振民育德。\n干父之蠱意厉吉，\n裕父之蠻终吝惑。",
+  jie:"这支签说的是「整顿」。蛊的本义是器皿里的虫——比喻某种局面已经腐败、停滞、出了问题。你问的事可能需要一次彻底的清理：该扔的扔、该改的改、该换的换。蛊卦不怕坏，怕的是「裕父之蛊」——明明坏了还纵容、还不动手修。",
+  hua:"今天找出这件事里「最让你不舒服的一个点」，然后动手处理它。蛊卦的解法永远只有一个：动手清理，越拖越烂"},
+ {no:19, name:"地泽临", theme:"临事以敬", base:56,
+  poem:"泽上有地临大君，\n君子以教思无穷。\n至临无咎咸临吉，\n知临大君行正中。",
+  jie:"这是一支「临近/迫近」的签。你问的事情正在逼近一个关键节点——可能是截止日期、可能是决定时刻、可能是结果揭晓。临卦告诉你：越是靠近，越要「敬」。不是害怕，是以郑重的态度对待每一步。临事以敬，未有不成的。",
+  hua:"今天为这件事做一个「倒计时计划」——列出接下来七天每天必须完成的一件事。临卦最怕「到了眼前才发现没准备好」"},
+ {no:20, name:"风地观", theme:"观察入微", base:50,
+  poem:"风行地上观盥荐，\n圣人以神道设教。\n童观小人窥观吝，\n观我生进退无躁。",
+  jie:"这支签叫你别急动手，先「观」——仔细看、认真想、全面了解。你可能掌握的信息还不够，或者你看到的只是表面。观卦的建议是：在行动之前，先把自己变成一个冷静的观察者。站在高处看全局，比扎进去瞎忙有用得多。",
+  hua:"今天花半小时做一次「信息审计」——把你手上关于这件事的所有资料/消息/数据翻一遍，看看有没有被忽略的关键信息"},
+ {no:21, name:"火雷噬嗑", theme:"决断去障", base:52,
+  poem:"雷电合嗑利用狱，\n先王以明罚敕法。\n屦校灭趾无咎行，\n噬肤灭鼻正不跋。",
+  jie:"这是一支「咬合/决断」的签。噬嗑的字面意思是「上下颚咬合」——比喻有一道障碍卡在中间，必须用力「咬碎」才能通过。你问的事有一个明确的阻碍点，它不会自己消失，你需要做一个果断的决定或行动把它清除掉。犹豫只会让障碍越长越大。",
+  hua:"今天识别出这件事里「唯一那个卡住你的东西」，然后给它一个明确的截止日期。噬嗑的力道在于「一口咬定，不再松口」"},
+ {no:22, name:"山火贲", theme:"文质彬彬", base:50,
+  poem:"山下有火贲饰明，\n君子以政事无争。\n贲其趾舍车徒行，\n贲于丘园束帛羹。",
+  jie:"这支签讲的是「包装与实质」的关系。贲就是装饰、文采——你问的事可能需要在「呈现方式」上下点功夫。不是让你虚浮，而是「文质彬彬」：有好内容，也要有好形式。有时候一件事推不动，不是因为内容不好，是因为表达方式不对。",
+  hua:"今天把你在这件事上的「核心信息」重新整理一遍——换一种说法、换一个格式、换一套视觉。贲卦说得好：好的内容值得好的包装"},
+ {no:23, name:"山地剥", theme:"硕果留一线", base:32,
+  poem:"剥床以足渐及肤，阴盛阳衰且安居。\n硕果不食留一线，君子得舆待阳苏。",
+  jie:"剥，是\u201c一层层剥落\u201d之象。所问之事可能正在走下坡，或某段关系、某个局面正在失去支撑。此时大动作只会加速剥落。但请记住\u201c硕果不食\u201d——剥到尽头，自有一线生机被保住。现在要做的不是救全场，是护住最要紧的那颗果。",
+  hua:"今天列一张清单，写下此事里\u201c最不能失去的一样东西\u201d——接下来只护它，其余可舍"},
+ {no:24, name:"地雷复", theme:"一阳来复", base:54,
+  poem:"雷在地中复七日，\n先王以至日闭关毕。\n不远复无祗悔吉，\n休复元吉敦复实。",
+  jie:"这是一支「回归/重启」的签。复卦是六十四卦里最有希望的一个——阴极之后一阳初生，代表转折点来了。你问的事可能经历了一段低谷或停滞，但现在「一阳来复」，转机已经开始萌动。关键是要抓住这股回弹的势头，别让它溜走。",
+  hua:"今天做一件「回归初心」的事——回到这件事情最开始打动你的那个原因，重新确认一遍。复卦的力量来自「记得为什么出发」"},
+ {no:25, name:"天雷无妄", theme:"顺天无妄", base:56,
+  poem:"天下雷行无妄兴，\n先王以茂对时育。\n无妄往吉行正道，\n不耕获不菑畬徵。",
+  jie:"这支签的核心是「不胡来」。无妄就是「不虚假、不妄动、不投机取巧」。你问的事，最靠谱的策略是走正道、按规矩来、不抄近路。无妄卦特别提醒：有时候「不耕获」（不期望不劳而获）反而是最快的路——因为弯路最少。",
+  hua:"今天检查一下这件事里有没有「走捷径」的诱惑，然后主动选择那条「笨但稳」的路。无妄的福气，藏在老实人手里"},
+ {no:26, name:"山天大畜", theme:"积厚流光", base:62,
+  poem:"天在山中大畜积，\n君子以多识前言。\n良马逐闲舆卫吉，\n童牛之牿元亨天。",
+  jie:"这是一支「大积累」的签。大畜不同于小畜——它不是小小的积蓄，是大量的储备。你问的事正处于一个「输入大于输出」的阶段：在学习、在积累、在打底子。这个过程可能看不到即时回报，但大畜卦告诉你：这些储备会在未来某一刻爆发式回馈给你。",
+  hua:"今天为这件事投资一项「长期资产」——学一个新技能、买一本专业书、建立一个系统。大畜的精髓是「现在的每一份投入，都是未来的弹药」"},
+ {no:27, name:"山雷颐", theme:"养正顾本", base:46,
+  poem:"雷在山下颐养正，\n君子以慎言语节饮食。\n观颐自求口实吉，\n拂经颐贞凶不可忽。",
+  jie:"这支签讲的是「养」——养身体、养资源、养心态。颐就是腮帮子（吃东西的样子），引申为滋养与供给。你问的事可能正处于一个需要「输血」的阶段：要么是自己状态不够，要么是资源不足。颐卦提醒你：先把自己养好，再去谋大事。「自求口实」——靠自己找到营养来源。",
+  hua:"今天安排一顿真正好吃的饭 + 早睡一小时。颐卦最实在的道理：「打仗之前先吃饱」，状态是一切的前提"},
+ {no:28, name:"泽风大过", theme:"栋桡之惧", base:38,
+  poem:"泽灭木大过栋桡，\n君子以独立不惧。\n藉用白茅柔在下，\n老夫女妻过涉波。",
+  jie:"这是一支「负重过大」的签。大过的意象是「栋梁弯曲」——压力太大了，结构快要撑不住。你问的事可能承担了超出当前能力的负荷，或者时间/资源/人力都绷得太紧。大过卦不是说这事不行，是说「需要减负」或者「需要更强的支撑」才能扛过去。",
+  hua:"今天列出这件事的「三大压力源」，然后选其中一个想办法减轻或外包。大过的解法永远是：要么减负，要么加固，不能硬撑"},
+ {no:29, name:"坎为水", theme:"行险守信", base:30,
+  poem:"水洊至矣习坎重，有孚维心亨道通。\n樽簋贰缶宁自守，行险不失其信功。",
+  jie:"重险叠加，内外皆水——这是一支艰难的签，不绕弯子。但坎卦卦辞是\u201c有孚维心亨\u201d：险再深，心不乱、行不失，就走得出去。别指望一口气冲出去，把大难关切成一个个小坎，一坎一坎过。行险而不失其信，是唯一的路。",
+  hua:"今晚睡前写下三行字——最坏会怎样、我还有什么、明天先做哪一步。心一定，险就浅三分"},
+ {no:30, name:"离为火", theme:"光明正大", base:65,
+  poem:"明两作离照四方，\n大人以继明照四方。\n履错然敬之无咎，\n黄离元吉永其光。",
+  jie:"这是一支非常明亮、通透的签！离就是火、光明、清晰。你问的事最适合的策略是「透明化」——摊开来说、公开地做、不走暗线。离卦的能量是：越光明，越安全；越隐藏，越危险。如果你有什么顾虑或秘密，现在是时候让它见光了。",
+  hua:"今天把这件事里「一直没敢说出口的话」对一个信任的人说出来。离卦的治愈力来自「光照进来的地方，阴影就消失了」"},
+ {no:31, name:"泽山咸", theme:"以诚感应", base:54,
+  poem:"山上有泽咸感通，\n君子以虚受人中。\n咸其拇志在外吉，\n咸其脢执下道无穷。",
+  jie:"这是一支「感应」的签。咸通「感」——无心之感、自然而然的吸引。你问的事不太适合用力追，更适合「吸引」过来。咸卦的智慧是：当你把自己的状态调对了（真诚、开放、不刻意），对的人和事会被你自然而然地吸引过来。与其满世界找，不如让自己变得值得被找到。",
+  hua:"今天做一件「不求回报」的善意之事——帮一个忙、送一份礼、夸一句人。咸卦的原理是：你发出什么频率，就收回什么频率"},
+ {no:32, name:"雷风恒", theme:"久而不改", base:54,
+  poem:"雷风相与恒无咎，\n君子以立不易方。\n恒其德贞妇人吉，\n振恒凶兮久其长。",
+  jie:"这是一支「坚持」的签。恒就是长久不变——你问的事需要的不是聪明才智，是「不放弃」。恒卦特别区分了两种坚持：一种是「恒其德」（坚守正道），这是吉的；一种是「振恒」（盲目折腾、反复改变方向），这是凶的。选对方向后，剩下的就是一字诀：熬。",
+  hua:"今天为这件事写下一句「不管发生什么都不会变的原则」，贴在能看到的地方。恒卦的力量来自「锚定不变的东西」"},
+ {no:33, name:"天山遁", theme:"清醒而退", base:34,
+  poem:"天下有山宜退藏，君子远小志不伤。\n执用黄牛固其守，好遁嘉遁道自光。",
+  jie:"天下有山，山再高也够不着天——有些局，不是你不够好，是它本来就该退出。所问之事里，可能有一段消耗你的人、事或环境。遁不是逃跑，是清醒地拉开距离。退这一步不是输，是把自己从泥里拔出来。",
+  hua:"今天做一次小切割——取关一个消耗你的信息源、推掉一个可去可不去的局，给自己一段留白"},
+ {no:34, name:"雷天大壮", theme:"壮而用戒", base:50,
+  poem:"雷在天上大壮行，\n君子以非礼弗履。\n壮于趾征凶有孚，\n藩决羸羊遂不赢。",
+  jie:"这是一支「力量强大但需节制」的签。大壮的意思是「非常强壮」——你问的事能量很足、势头很猛。但大壮卦反复警告：力量越大，越要有约束。「壮于趾」（凭一股蛮劲往前冲）是凶的；「藩决」（突破束缚）要讲究时机。有力气是好事，乱用力是坏事。",
+  hua:"今天在做任何与此事相关的决定前，先问自己一句「这是我理性的选择还是情绪的冲动？」大壮的功课全在「管住力量」"},
+ {no:35, name:"火地晋", theme:"明出地上", base:56,
+  poem:"明出地上晋康侯，\n君子以自昭明德。\n晋如摧如贞吉行，\n晋其角维用伐邑。",
+  jie:"这是一支「前进/上升」的签！晋就是晋级、前进、向上发展。你问的事正处于一个上升通道里——像太阳从地平线升起来，越来越亮。晋卦的建议是：大胆往前走，但要「自昭明德」——让自己的能力和品德配得上这个上升的位置。名实相符，晋升才稳。",
+  hua:"今天做一件「让自己更配得上目标位置」的事——补一个短板、学一个新知、练一项技能。晋卦的真谛是「机会只留给有准备的高度」"},
+ {no:36, name:"地火明夷", theme:"明夷守晦", base:32,
+  poem:"明入地中明夷伤，\n君子以莅众用晦。\n明夷于飞垂其翼，\n入于左腹获心意。",
+  jie:"这是一支「光明受损」的签。明夷的意思是「光明被损伤」——太阳落入地下，光线被遮蔽。你问的事可能遭遇了挫折、误解、打压或不被认可的时刻。明夷卦的核心生存策略是「用晦」——收敛光芒、低调行事、保护好自己的核心实力。这不是认输，是「留得青山在」。",
+  hua:"今天做一个「低姿态」的选择——不争辩、不解释、不炫耀。明夷时期的每一分锋芒收敛，都是在保护未来的火种"},
+ {no:37, name:"风火家人", theme:"正家而定", base:60,
+  poem:"风自火出家人利，\n君子以言有物行恒。\n闲有家悔亡志初定，\n王假有家交相爱。",
+  jie:"这是一支「内外兼修」的签。家人卦讲的是家庭/团队/核心圈子的治理之道。你问的事可能跟「身边的人」密切相关——家人、合伙人、核心团队成员。家人卦的智慧是：先把内部理顺了，外部的事自然顺。「正家」而后「天下定」——搞定核心圈子，外围问题迎刃而解。",
+  hua:"今天跟你「核心圈子里最重要的一位」好好吃顿饭、聊聊天。家人卦的信条是：内部关系顺了，外部世界就顺了"},
+ {no:38, name:"火泽睽", theme:"异中求同", base:48,
+  poem:"上火下泽睽乖张，\n君子以同而异方。\n丧马勿逐自复归，\n遇主于巷道不长。",
+  jie:"这是一支「看似对立实则可合」的签。睽就是「背离、不一致」——你问的事可能存在矛盾的两方、两种意见或两个方向。但睽卦的深层意思是：表面的差异之下，底层是可以统一的。「丧马勿逐」——跑丢的马不用追，它会自己回来。意思是：有些分歧不用强行解决，时间到了自然和解。",
+  hua:"今天找一个「跟你在这件事上观点不同的人」，安静听完他的理由，不说反驳的话。睽卦的修炼是「在不认同中看到可理解的部分」"},
+ {no:39, name:"水山蹇", theme:"蹇而止步", base:42,
+  poem:"山上有水蹇难行，\n君子以反身修德。\n往蹇来誉反身吉，\n大蹇朋来道不倾。",
+  jie:"这是一支「行路艰难」的签。蹇就是跛脚、行走困难——前面有山水阻隔，路不好走。你问的事确实遇到了实实在在的困难，不是心理作用。蹇卦的建议非常具体：「反身修德」——既然外面走不通，就回头修炼自己。等自身更强了，再出发。此刻硬闯只会摔得更惨。",
+  hua:"今天把「向外推进」的时间全部改成「向内充实」——读一本书、复盘一次、锻炼一轮。蹇的出路不在前方，在自己身上"},
+ {no:40, name:"雷水解", theme:"困厄得解", base:52,
+  poem:"雷雨作解险方舒，\n君子以赦过宥罪。\n田获三狐得黄矢，\n解而拇朋至斯须。",
+  jie:"这是一支「困局解开」的签！解就是化解、解除、松绑。你问的事如果之前一直卡着、堵着、拧着，现在可能迎来了松动的那一刻。解卦的意象是「雷雨作」——一场雷雨过后，百果草木都从壳里绽开。注意：解不是自动发生的，你需要有「田获三狐」的行动力——主动去抓住松动的机会。",
+  hua:"今天做一件「打破僵局」的小动作——发一条搁置很久的消息、打一个一直没拨的电话、提一个之前不敢提的要求。解卦的钥匙在你手里，不在天上"},
+ {no:41, name:"山泽损", theme:"损己成人", base:44,
+  poem:"山下有泽损德修，\n君子以惩忿窒欲。\n已事遄往尚合志，\n三人行则损一侪。",
+  jie:"这是一支「先舍后得」的签。损就是减少、损失、付出。但你注意：损卦在易经里不是凶卦——它的逻辑是「损下益上」或「损刚益柔」，通过主动的舍弃来换取更大的收获。你问的事可能需要你先投入、先让利、先吃亏。别心疼，这是「以损为进」的策略。",
+  hua:"今天主动「亏」一次——请客买单、多干一份活、让出一个利益。损卦的反转魔法是：你主动给的，命运会加倍还你"},
+ {no:42, name:"风雷益", theme:"损上益下", base:60,
+  poem:"风雷益木日方升，\n君子以见善则迁。\n利用为大作往吉，\n益之用凶事不应。",
+  jie:"这是一支「增益/受益」的签！益就是好处、增加、成长。你问的事正处于一个「输入大于输出」的良性循环里——有人帮你、有机会来、有资源在汇聚。益卦提醒你要「见善则迁」：看到好的机会就抓住，看到对的方向就调整。但也警告：不要用「益」去做凶险的事——好运气要用在正道上。",
+  hua:"今天把收到的每一个「好消息」都记下来，然后选其中一个立刻跟进。益卦的秘诀是：好运来的时候，要接得住、用得对"},
+ {no:43, name:"泽天夬", theme:"决而去邪", base:46,
+  poem:"泽上于天夬扬行，\n君子以施禄及下。\n壮于前趾往不胜，\n无号终有戎莫轻。",
+  jie:"这是一支「决断/切割」的签。夬就是决裂、去除、宣判。你问的事里可能有一段关系、一个选项或一种状态需要做出最终决定——不能再拖了。夬卦的意象是「泽上于天」：水汽聚集到天上，到了必须落下来的临界点。决策本身可能不舒服，但不决策的代价更大。",
+  hua:"今天给那件「一直拖着没做决定的事」画一个句号——不管是「是」还是「否」，都要有个明确的结果。夬卦的力道在于「当断则断」"},
+ {no:44, name:"天风姤", theme:"不期而遇", base:44,
+  poem:"天下有风姤相遇，\n君子以诰命四方。\n系于金柅贞吉行，\n包有鱼义莫令伤。",
+  jie:"这是一支「意外相遇」的签。姤就是邂逅、不期而遇——你问的事可能会以一种你没想到的方式出现转机：一个偶然认识的人、一条意外看到的信息、一个突然冒出来的机会。姤卦提醒你：遇到意外之喜时要「系于金柅」——稳住、别冲动、好好判断这个「遇见」到底是缘还是劫。",
+  hua:"今天保持「触角打开」的状态——走一条没走过的路、看一个没看过的领域、聊一个没聊过的话题。姤卦的机遇总藏在「意料之外」的地方"},
+ {no:45, name:"泽地萃", theme:"聚人以成", base:54,
+  poem:"泽上于地萃会聚，\n君子以除戎器戒不虞。\n有孚不终乃乱萃，\n萃位无咎资永图。",
+  jie:"这是一支「聚集/汇合」的签。萃就是荟萃、聚合——人、资源、机会往同一个地方汇聚。你问之事需要一个「聚」的动作：把散落的资源整合起来、把各方的力量拧成一股绳。萃卦特别强调「有孚」——聚合的基础是诚信，没有信任的聚集只是乌合之众。",
+  hua:"今天发起一次「小型聚会」——约三五个与这件事相关的人一起喝杯咖啡/吃个饭。萃卦的魔力在「人到了一起，事情就活了」"},
+ {no:46, name:"地风升", theme:"积小高大", base:54,
+  poem:"地中生木升徐行，\n君子以顺德积小以高。\n允升大吉南征利，\n升阶亭亭步步高。",
+  jie:"这是一支「稳步上升」的签。升就是升高、进步、往上走。但升卦的上升不是坐电梯，是「积小以高」——像树木从地里长出来，一寸一寸地往上窜。你问的事前景是好的，但节奏是慢的、渐进的。别急，每一步都算数。升卦最怕的就是「想快」——一快就根基不稳。",
+  hua:"今天为这件事确立一个「最小的下一步」——小到不可能失败的那一种，然后立刻做完。升卦的哲学是「每一步都在上升，哪怕只是一厘米」"},
+ {no:47, name:"泽水困", theme:"守志待通", base:36,
+  poem:"泽中无水困君子，尚口乃穷守志诚。\n困于株木入幽谷，三岁不觌见天心。",
+  jie:"这是一支讲\u201c困\u201d的签，先别慌。易经里\u201c困\u201d之后紧接着是\u201c井\u201d与\u201c革\u201d——旧局困住之处，正是新井将打之地。眼下这事大概率推不动，强推更伤。守住该守的，缩小说的，做实做的，等那个\u201c变\u201d的信号。",
+  hua:"明早出门前，把一件拖了很久的小事彻底做完——困卦最忌\u201c瘫着\u201d，一个小闭环能松动整个局面"},
+ {no:48, name:"水风井", theme:"井养不穷", base:48,
+  poem:"木上有水井德不穷，\n君子以劳民劝相。\n井泥不食下废井，\n井冽寒泉食可充。",
+  jie:"这是一支「源头活水」的签。井卦讲的是一口永不枯竭的水井——象征稳定的来源、可靠的根基、持续不断的供给。你问的事可能需要找到一个「可持续的模式」而不是一次性解决方案。井也提醒你：井要经常清理（「井甃」），不然会淤塞。维护比建设更重要。",
+  hua:"今天检查一下这件事的「基础设施」——是不是太久没维护了？数据备份了吗？关系联络了吗？系统更新了吗？井卦的忠告是「别只顾打水，忘了洗井」"},
+ {no:49, name:"泽火革", theme:"革故鼎新", base:52,
+  poem:"泽中有火革变通，\n君子以治历明时。\n巳日乃革征贞吉，\n革言三就有成功。",
+  jie:"这是一支「变革/转型」的签。革就是变革、革命——旧的要去，新的要来。你问的事可能正处在一个需要「推翻重来」或「大幅调整」的关口。革卦的timing很重要：「巳日乃革」——时机到了再变，不早不晚。而且变革要「革言三就」——多次沟通、反复确认，让大家都有心理准备。",
+  hua:"今天为这件事列出「必须改掉的三样旧东西」和「想要建立的三样新东西」。革卦的第一步永远是「先看清什么该死，什么该生」"},
+ {no:50, name:"火风鼎", theme:"正位凝命", base:62,
+  poem:"木上有火鼎新成，\n君子以正位凝命。\n鼎颠趾出否得妾，\n鼎黄耳金铉利行。",
+  jie:"这是一支「成器/转化」的签！鼎是古代烹煮食物的重器，象征「将原材料转化为养分」的能力。你问的事具有很好的「转化潜力」——投入的资源/努力能够实实在在地变成成果。鼎卦提醒你：要成为一口「好鼎」，需要两个条件——「正位」（摆对位置）和「凝命」（专注使命）。定位准了、专注够了，自然「鼎盛」。",
+  hua:"今天把这件事的「核心产出」明确定义为一句话——如果这口「鼎」只能煮一道菜，那道菜是什么？鼎卦的力量来自「知道自己是一口什么样的鼎」"},
+ {no:51, name:"震为雷", theme:"雷动奋发", base:52,
+  poem:"洊雷震恐虩虩，\n君子以恐惧修省。\n震来笑哑哑吉，\n震不于其躬邻借。",
+  jie:"这是一支「震动/觉醒」的签。震就是雷——突如其来的震动、惊醒、冲击。你问的事可能马上要经历一次「震动」：一个突发消息、一个意外变化、一个让人猛然清醒的时刻。震卦的态度不是恐惧，是「恐惧修省」——被震动之后立刻反省、修正、提升。震动本身不是坏事，它是唤醒你的闹钟。",
+  hua:"今天主动做一件「让自己震动一下」的事——公布一个决定、提交一份成果、说出一句藏了很久的话。震卦说得好：「自己震动的强度，决定了外界震动时你的抗性」"},
+ {no:52, name:"艮为山", theme:"止其所止", base:46,
+  poem:"兼山艮止思不出，\n君子以思不出其位。\n艮其趾不拯其随，\n敦艮之吉终无悔。",
+  jie:"这是一支「停下来」的签。艮就是停止、静止——像一座山，岿然不动。你问的事现在最需要的可能不是「多做」，而是「不做」。艮卦的智慧极其深刻：「思不出其位」——不想超出你位置/能力/职责范围的事。在该停的时候停下，是一种比前进更高级的智慧。",
+  hua:"今天设一个「什么都不做的时段」——一小时，不碰这件事相关的任何东西。艮卦的修炼是「在停下来的时间里，听到平时听不到的声音」"},
+ {no:53, name:"风山渐", theme:"渐进有序", base:52,
+  poem:"山上有木渐徐行，\n君子以居贤德善俗。\n鸿渐于陆可用仪，\n渐于陵妇不育哭。",
+  jie:"这是一支「循序渐进」的签。渐就是逐渐、一步步来——像大雁飞行时的队形变化，像树木慢慢长高。你问的事不适合速战速决，而是需要「渐」的耐心：一步一步来、一层一层上、一个阶段一个阶段地推进。渐卦用「鸿雁」做比喻——大雁从不着急，但总能到达目的地。",
+  hua:"今天为这件事画一张「阶段路线图」——至少标出三个里程碑，每个之间隔着合理的时间。渐卦的安心感来自「我知道下一步在哪里，我不急」"},
+ {no:54, name:"雷泽归妹", theme:"归妹愆期", base:40,
+  poem:"泽上有雷归妹行，\n君子以永终知敝。\n归妹娣跛能视吉，\n愆期迟归有时定。",
+  jie:"这是一支「时机未到」的签。归妹的意思是「女子出嫁」——但这个「归妹」是不合时宜的、操之过急的。你问的事可能有人在催你、环境在推你、自己在急，但归妹卦说：时候没到，勉强出手只会「跛能视」——勉强能看，但走不稳。真正的机会有它自己的时间表，急不来。",
+  hua:"今天对这件事做一个「延期承诺」——告诉自己「我可以等」，然后把注意力转到别的有价值的事上。归妹的智慧是「属于你的不会跑，不属于你的抢不来」"},
+ {no:55, name:"雷火丰", theme:"盛极当惕", base:50,
+  poem:"雷电皆丰明照世，\n君子以折狱致刑。\n丰其蔀日中见斗，\n丰其沛沫沱吉至。",
+  jie:"这是一支「丰盛但藏隐患」的签。丰就是盛大、丰满、充盈——你问的事可能正处于一个高峰期：资源多、关注度高、成果显眼。但丰卦反复用一个意象警告你：「丰其蔀」——太大的遮蔽物挡住了阳光。盛极的时候最容易出问题，因为人会骄傲、会松懈、会看不见阴影。",
+  hua:"今天做一件「居安思危」的事——检查一下这件事最大的风险点在哪里，然后为它准备一个预案。丰卦的保命符是「在最得意的时候，最警惕」"},
+ {no:56, name:"火山旅", theme:"旅次安身", base:44,
+  poem:"山上有火旅羁身，\n君子以明慎用刑。\n旅琐斯其所灾，\n得其资斧心始真。",
+  jie:"这是一支「过渡期/漂泊」的签。旅就是旅行、客居、不在家的状态。你问的事可能让你有一种「不稳定感」或「过渡感」——还没安定下来、还没找到归属、还在路上。旅卦的核心建议是「得其资斧」——在旅途中先确保自己有基本的资源和工具（资斧=旅费和斧头），有了底气，就不怕路上的不确定。",
+  hua:"今天为自己准备一份「旅途行囊」——这件事上，你最核心的三项资源是什么？确认它们都在、都能用。旅卦的安全感来自「我知道带着什么上路」"},
+ {no:57, name:"巽为风", theme:"顺风而行", base:52,
+  poem:"随风巽入德无申，\n君子以申命行事。\n进退利武人之贞，\n频巽吝兮志不伸。",
+  jie:"这是一支「灵活渗透」的签。巽就是风——无形无色，但能进入一切缝隙。你问的事不适合硬碰硬，而需要「巽」的智慧：灵活、谦逊、顺势而为。风不跟墙对抗，它绕过去。巽卦特别警告「频巽」——反复犹豫、频繁改变主意是最糟糕的。可以灵活，但不能没主见。",
+  hua:"今天试着用一种「非直接的方式」推进这件事——绕一个弯、换一个角度、借一个力。巽卦的精妙在「最柔软的东西，往往能到达最坚硬的地方」"},
+ {no:58, name:"兑为泽", theme:"和悦通达", base:56,
+  poem:"丽泽兑朋友讲习，\n君子以朋友讲商。\n和兑吉兮孚兑凶，\n介疾有喜悦无疆。",
+  jie:"这是一支「喜悦/沟通」的签！兑就是泽、就是悦——交流的快乐、合作的愉快。你问的事非常适合通过「对话」来解决：找人聊、把话说开、达成共识。兑卦的能量是非常正向的——但要注意「孚兑」的危险：为了讨好别人而假装高兴，这种「虚伪的和悦」会带来凶兆。真实的沟通才有力量。",
+  hua:"今天进行一次「真正开心的对话」——选一个你愿意聊的人，聊一件你们都关心的事。兑卦的法则是「真诚的愉悦，是最好的通行证」"},
+ {no:59, name:"风水涣", theme:"涣散重聚", base:46,
+  poem:"风行水上涣离散，\n君子以享于帝立庙。\n涣奔其机悔亡吉，\n涣其群元吉大道。",
+  jie:"这是一支「解散与重组」的签。涣就是消散、融化——像冰化为水、像风吹散雾。你问的事可能正在经历一段「散」的过程：原来的结构在松动、旧的模式在瓦解。但这不一定是坏事——涣卦的深意是：有些东西必须先散开，才能以更好的方式重新组合。「涣其群」——解散不合适的群体，才能迎来真正的「元吉」。",
+  hua:"今天主动「释放」一样不再服务于你的东西——一个旧习惯、一段过期关系、一个过时想法。涣卦的魔法是「腾出的空间，自然会填入更好的东西」"},
+ {no:60, name:"水泽节", theme:"有节不逾", base:50,
+  poem:"泽上有水节制度，\n君子以制数度议德行。\n不出户庭无咎知，\n苦节不可贞道明。",
+  jie:"这是一支「节制/界限」的签。节就是节制、限度、规矩——像河堤约束水流。你问的事需要一个清晰的「边界感」：什么可以做、什么不可以；多少合适、多少过分。节卦区分了两种节制：「安节」（舒适的、合理的节制）是吉的；「苦节」（过度苛刻的、自我折磨式的节制）是不可持续的。找到中间的那个甜点。",
+  hua:"今天为这件事设定三个「清晰的边界」——时间边界、精力边界、金钱边界。节卦的自由来自「知道底线在哪里，反而在底线之上游刃有余」"},
+ {no:61, name:"风泽中孚", theme:"诚信感通", base:64,
+  poem:"泽上有风中孚信，\n君子以议狱缓死。\n鸣鹤在阴子和之，\n我有好爵吾与尔。",
+  jie:"这是一支「极度吉祥」的签！中孚就是「心中的诚信」——发自内心的真诚与可信。你问的事最核心的成功因素就是「信」：信用、信念、信任、信心。中孚卦用了一个绝美的意象：「鸣鹤在阴，其子和之」——一只鹤在树荫里鸣叫，远处的小鹤跟着应和。真诚的声音，总会找到共鸣。只要你真心实意，对的人和对的事会被你吸引过来。",
+  hua:"今天做一件「完全出于诚意、不图回报」的事——许下一个承诺并兑现它、说一句真话哪怕不方便。中孚的力量是宇宙级别的：「诚者，天之道也」"},
+ {no:62, name:"雷山小过", theme:"小过宜慎", base:40,
+  poem:"山上有雷小过行，\n君子以行过乎恭。\n飞鸟遗音不宜上，\n公弋取彼在陵平。",
+  jie:"这是一支「小差错/过度」的签。小过的意思是有一些「过头」的地方——做得稍微多了点、说得稍微过了点、期待稍微高了点。就像一只小鸟，飞太高了反而危险（「飞鸟遗之音，不宜上宜下」）。你问的事整体方向没问题，但在执行层面可能有「过度」的倾向：用力过猛、期待过高、步子太大。",
+  hua:"今天做一次「向下修正」——把这件事的预期降低一格、把节奏放慢一拍、把目标缩小一圈。小过的智慧是「飞得低一点，反而飞得远」"},
+ {no:63, name:"水火既济", theme:"功成身退", base:54,
+  poem:"水在火上既济成，\n君子以思患预防。\n曳其轮濡其尾吝，\n高宗伐鬼方三年平。",
+  jie:"这是一支「已完成/成功」的签！既济就是「已经渡河」——事情成了、目标达到了、阶段结束了。但既济卦最深刻的提醒是：「思患而预防」——成功之后恰恰是最危险的时候，因为人容易松懈。历史上「高宗伐鬼方三年克之」——即便赢了也花了三年，说明成功的代价从来不小。功成之后要更加谨慎，而不是开香槟庆祝。",
+  hua:"今天做一件「成功后的防守动作」——复盘一次、备份一次、感谢一批人。既济的智慧是「渡过河之后的第一个动作不应该是欢呼，应该是检查船还好不好」"},
+ {no:64, name:"火水未济", theme:"渡河未已", base:46,
+  poem:"火在水上未济涯，\n君子以慎辨物居方。\n濡其尾亦无攸利，\n君子之光晖有孚。",
+  jie:"这是六十四卦的最后一卦——「还没有渡河」。未济的意思是：事情还没完、目标还没达、征程还在继续。听起来好像不太好？但未济卦其实蕴含着极大的希望——正因为「未济」，所以还有可能性、还有上升空间、还有故事可以写。未济的意象是小狐狸渡河，尾巴湿了（「濡其尾」）——差点就过去了，差一点点。这一点点，就是下一阶段的起点。",
+  hua:"今天为这件事写下「下一个版本的目标」——不是终结，是续篇。未济卦的终极智慧是「六十四卦以未济结束，因为人生永远不会真正结束，永远有下一章」"}
+];
+var SIGN_MAP = {};
+(function(){ for (var i=0;i<SIGN_LIB.length;i++) SIGN_MAP[SIGN_LIB[i].no] = SIGN_LIB[i]; })();
+function signOf(seq, hexName){ /* v2.0 全量入库，64支签全覆盖 */
+  return SIGN_MAP[seq] || { no: seq, name: hexName || "未知", theme: "（未知主题）", base: 50, poem: "（暂无签诗）", jie: "（暂无解签）", hua: "今天做一件小事，给自己一个闭环" };
+}
+
+/* 动态解签四槽位全局词典（键控填充，不逐签存储） */
+var SLOT_TIYONG = {
+ "用生体":"外力正在帮你——有人或机会正向你的方向靠拢。",
+ "比和":"内外相应，局面顺遂，按部就班即可。",
+ "体克用":"主动权在你手里，事在人为，成事要靠自己争取。",
+ "体生用":"投入在先、回报在后，付出暂时看不到回响，注意别把自己耗干。",
+ "用克体":"外部阻力实打实，硬碰硬只会耗损，宜以柔化之。"
+};
+var SLOT_WS = {
+ "旺":"今日气场正旺，行动宜早不宜迟。",
+ "相":"今日得生扶，顺势推进颇为有利。",
+ "休":"今日气场平缓，宜蓄力不宜强攻。",
+ "囚":"今日气场受制，大事缓行为宜。",
+ "死":"今日气场最弱，宜静养等待转机。"
+};
+var SLOT_MOVE = {
+ 1:"事情在起点，第一步宜稳不宜快。",
+ 2:"困在半途，进退两难——此时的\u201c退\u201d不是输，是换路。",
+ 3:"中途有变数，守住本心，以不变应万变。",
+ 4:"外境将有大动作，提前布局者得先机。",
+ 5:"尊者位上生变，留意上级或长辈的动向。",
+ 6:"收尾阶段生变，结果落定前不可松懈。"
+};
+var SLOT_BIAN = {
+ "用生体":"变卦外力转而助你，转机在即。",
+ "比和":"变卦与体同气，结局趋于平稳。",
+ "体克用":"变卦仍需你主动收尾，胜在可控。",
+ "体生用":"变卦仍泄你之力，见好就收。",
+ "用克体":"变卦压力仍在，宜及早布退路。"
+};
+
+/* ==================== §E Store localStorage 封装（唯一触碰点）+ 三类降级 ====================
+   降级①：localStorage 不可用（无痕等）→ 内存态 + UI 横幅提示，抽签照常
+   降级②：schema 不识别/数据损坏 → 忽略旧数据重新初始化，不 crash
+   降级③：历法越界（<1900 / >2100）→ Engine 返回 null，App 走提示分支（见 §F） */
+var Store = (function(){
+  var KEY = CONFIG.storeKey, SCHEMA = CONFIG.schema;
+  var available = false, reason = "", mem = null, cache = null;
+  try { /* 探测（本文件唯一 localStorage 触碰点） */
+    var probe = "__qg_probe__";
+    localStorage.setItem(probe, "1");
+    localStorage.removeItem(probe);
+    available = true;
+  } catch (e){ available = false; reason = "本机无法保存记录，本次会话内有效"; }
+  function readRaw(){
+    if (!available) return mem;
+    try { var s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; }
+    catch (e){ return null; }
+  }
+  function load(){
+    if (cache) return cache;
+    var raw = readRaw();
+    if (raw && typeof raw === "object" && raw.schema === SCHEMA && Array.isArray(raw.records)) cache = raw;
+    else cache = { schema: SCHEMA, records: [] };
+    /* v2.0 迁移：旧占位签记录自动用新签文修补 */
+    var migrated = false;
+    for (var mi = 0; mi < cache.records.length; mi++) {
+      var r = cache.records[mi];
+      if (r.snap && r.snap.theme === "（占位主题）" && SIGN_MAP[r.stick]) {
+        var ns = SIGN_MAP[r.stick];
+        r.snap.theme = ns.theme; r.snap.name = ns.name;
+        r.snap.poem = ns.poem; r.snap.jie = ns.jie;
+        r.sum = ns.theme + " · " + (r.snap.relMain || "");
+        if (r.snap.resolve) r.snap.resolve.deed = ns.hua;
+        migrated = true;
+      }
+    }
+    if (migrated) persist();
+    return cache;
+  }
+  function persist(){
+    if (!available){ mem = cache; return false; }
+    try { localStorage.setItem(KEY, JSON.stringify(cache)); return true; }
+    catch (e){ available = false; reason = "写入失败，已切为会话内保存"; mem = cache; return false; }
+  }
+  return {
+    available: function(){ return available; },
+    reason: function(){ return reason; },
+    records: function(){ return load().records; },
+    add: function(rec){ load().records.push(rec); persist(); return rec; },
+    touch: function(){ persist(); }
+  };
+})();
+
+/* ==================== §F App 状态 / 起卦编排 / 记录 ==================== */
+function pad2(n){ return (n < 10 ? "0" : "") + n; }
+function normalizeQ(s){ /* 问题规范化（口径定稿 v1 §一.1）：去空白→NFKC→码点数；上限50字 */
+  var t = String(s || "").trim().replace(/\s+/g, " ");
+  /* NFKC 归一化（全角→半角等）；normalize 在所有目标浏览器可用 */
+  if (typeof t.normalize === "function") t = t.normalize("NFKC");
+  /* 只保留汉字/字母/数字用于起卦计数 */
+  return t.replace(/[^0-9A-Za-z\u4e00-\u9fff]/g, "");
+}
+function localParts(){
+  var dt = new Date(); /* 红线：只用本地分量，禁 toISOString/getUTC* */
+  return { y: dt.getFullYear(), m: dt.getMonth()+1, d: dt.getDate(), h: dt.getHours() };
+}
+function hourBranchOf(h){ return Math.floor((h+1)/2) % 12 + 1; }
+function qStr(p){ return p.y + "-" + pad2(p.m) + "-" + pad2(p.d); }
+function hashOf(text){ /* FNV-1a 32 位（哈希分化开关默认关，等 tech-architect 结论） */
+  var h = 2166136261;
+  for (var i=0;i<text.length;i++){ h ^= text.charCodeAt(i); h = (h * 16777619) >>> 0; }
+  return h;
+}
+function askQigua(nq){ /* 问事签起卦：口径由 CONFIG.askGua 控制（定稿 B方案=字数掺时辰） */
+  var c = CONFIG.askGua;
+  var n = c.hashMix ? (nq.length + hashOf(nq) % 16) : nq.length;
+  if (n <= 0) return null;
+  if (c.mode === "plusHourB"){ return MEI.qiguaByCharsPlusHourB(n, hourBranchOf(localParts().h)); }
+  if (c.mode === "plusHour"){ return MEI.qiguaByCharsPlusHour(n, hourBranchOf(localParts().h)); }
+  return MEI.qiguaByCharsHalf(n); /* half 旧模式保留备用 */
+}
+
+function composeDraw(g, dp){ /* 起卦数+日期 → 完整出签数据（纯函数式编排，无随机） */
+  var pan = MEI.paipan(g.u, g.l, g.m);
+  var mb = CAL.solarMonthBranch(dp.m, dp.d);
+  var jdn = CAL.jdn(dp.y, dp.m, dp.d) + (dp.h >= 23 ? 1 : 0); /* 23 点换日 */
+  var dgz = CAL.dayGanzhi(jdn);
+  MEI.enrich(pan, mb, dgz.g, dgz.z);
+  var seq = pan["本卦"]["卦序"];
+  var sign = signOf(seq, pan["本卦"]["卦名"]);
+  var a = pan["辅助信息"];
+  var grade = gradeDraw(sign.base, pan["体用"]["主卦关系"], a["体卦旺衰"], a["用卦旺衰"], pan["体用"]["变卦关系"]);
+  var lunar = CAL.solarToLunar(dp.y, dp.m, dp.d);
+  var tiNum = MEI.numOf(pan["体用"]["体卦"]);
+  var tiWx = pan["体用"]["体卦五行"];
+  return {
+    pan: pan, sign: sign, grade: grade, mb: mb, dayGZ: dgz.g + dgz.z, lunar: lunar,
+    slots: {
+      tiyong: SLOT_TIYONG[pan["体用"]["主卦关系"]] || "",
+      ws: SLOT_WS[a["体卦旺衰"]] || "",
+      move: SLOT_MOVE[pan["动爻"]] || "",
+      bian: SLOT_BIAN[pan["体用"]["变卦关系"]] || ""
+    },
+    resolve: { /* 化解三件套：体卦五行×映射表生成（穿衣/方位）+ 签文库 hua */
+      good: WX_COLORS[MEI.elementGenerating(tiWx)].concat(WX_COLORS[tiWx]),
+      avoid: WX_COLORS[MEI.elementConquering(tiWx)],
+      dir: GUA_DIR[tiNum],
+      deed: sign.hua
+    }
+  };
+}
+function dailyGua(dp){ /* 每日一签：固定午时（时支数 7），日期纯函数，不依赖存储 */
+  var lunar = CAL.solarToLunar(dp.y, dp.m, dp.d);
+  if (!lunar) return null;
+  var yg = CAL.yearGanzhi(dp.y, dp.m, dp.d);
+  return MEI.qiguaByTime(ZHI.indexOf(yg.z)+1, lunar.m, lunar.d, CONFIG.dailyHourBranch);
+}
+function buildRecord(draw, type, q, dp){ /* 记录=解签快照（历史不可变）+ 紧凑字段 */
+  var s = draw.sign, gr = draw.grade, pan = draw.pan;
+  return {
+    d: qStr(dp), t: Date.now(),
+    type: type, q: (type === "daily") ? "" : q,
+    lv: gr.tier, hex: pan["本卦"]["卦名"], stick: s.no,
+    sum: s.theme + " · " + pan["体用"]["主卦关系"],
+    snap: {
+      tier: gr.tier, index: gr.index, no: s.no, name: s.name, theme: s.theme,
+      poem: s.poem, jie: s.jie,
+      upper: pan["本卦"]["上卦"], lower: pan["本卦"]["下卦"], moving: pan["动爻"],
+      bianName: pan["变卦"]["卦名"], relMain: pan["体用"]["主卦关系"], relBian: pan["体用"]["变卦关系"],
+      wsTi: pan["辅助信息"]["体卦旺衰"], mb: draw.mb, dayGZ: draw.dayGZ,
+      lunarStr: draw.lunar ? (CAL.yearGanzhi(dp.y,dp.m,dp.d).g + CAL.yearGanzhi(dp.y,dp.m,dp.d).z + "年" + CAL.lunarMonthName(draw.lunar.m, draw.lunar.leap) + CAL.lunarDayName(draw.lunar.d)) : "",
+      slots: draw.slots, resolve: draw.resolve
+    },
+    hd: 0
+  };
+}
+
+var App = {
+  state: { view: "qiu", calMonth: null, outOfRange: false, huangliDate: null },
+  today: null, todayStr: "",
+  init: function(){
+    var p = localParts();
+    this.today = p;
+    this.todayStr = qStr(p);
+    this.state.outOfRange = !CAL.inRange(p.y, p.m, p.d);
+    this.state.calMonth = p.y + "-" + pad2(p.m);
+    this.state.huangliDate = this.todayStr;
+  },
+  recordsByDate: function(d){
+    return Store.records().filter(function(r){ return r.d === d; });
+  },
+  findDaily: function(d){
+    var recs = Store.records();
+    for (var i=recs.length-1;i>=0;i--){ if (recs[i].type === "daily" && recs[i].d === d) return recs[i]; }
+    return null;
+  },
+  findDupAsk: function(d, nq){
+    var recs = Store.records();
+    for (var i=recs.length-1;i>=0;i--){
+      if (recs[i].type === "ask" && recs[i].d === d && normalizeQ(recs[i].q) === nq) return recs[i];
+    }
+    return null;
+  },
+  draw: function(question){ /* 摇签入口：返回 {rec, hint} 或 {error} */
+    var dp = localParts();
+    if (this.state.outOfRange || !CAL.inRange(dp.y, dp.m, dp.d)){
+      return { error: "本机日期超出历法支持范围（1900–2100），暂不能起卦。" };
+    }
+    var nq = normalizeQ(question);
+    if (!nq){
+      var daily = this.findDaily(this.todayStr);
+      if (daily) return { rec: daily, hint: CONFIG.dailyDoneHint };
+      var g = dailyGua(dp);
+      if (!g) return { error: "历法计算失败，暂不能起卦。" };
+      return { rec: Store.add(buildRecord(composeDraw(g, dp), "daily", "", dp)) };
+    }
+    var dup = this.findDupAsk(this.todayStr, nq); /* 一事一占：同日同问不重起 */
+    if (dup) return { rec: dup, hint: CONFIG.redrawHint };
+    var g2 = askQigua(nq);
+    if (!g2) return { error: "请输入有效的问题（汉字、字母或数字）。" };
+    return { rec: Store.add(buildRecord(composeDraw(g2, dp), "ask", question, dp)) };
+  }
+};
+
+/* ==================== §F1 Audio 音效管理（Web Audio 合成，零音频文件） ==================== */
+var AudioMgr = (function(){
+  var ctx = null, muted = false, _shakeSrc = null, _shakeGain = null;
+  function ctxReady(){
+    if (!ctx){
+      try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ return false; }
+    }
+    if (ctx.state === "suspended"){ try { ctx.resume(); } catch(e){} }
+    return ctx.state === "running";
+  }
+  /* ---- 摇签：竹签碰撞声（多脉冲撞击 + 竹木共振 + 弱摩擦底噪） ---- */
+  function playShake(){
+    if (muted || !ctxReady()) return;
+    try {
+      var dur = 1.5, t = ctx.currentTime, sr = ctx.sampleRate;
+      var master = ctx.createGain();
+      master.gain.setValueAtTime(0, t);
+      master.gain.linearRampToValueAtTime(0.35, t+0.08);
+      master.gain.linearRampToValueAtTime(0.28, t+0.5);
+      master.gain.linearRampToValueAtTime(0.15, t+1.1);
+      master.gain.linearRampToValueAtTime(0, t+dur);
+      master.connect(ctx.destination);
+
+      /* 底层摩擦噪声 */
+      var fLen = Math.floor(sr * dur), fBuf = ctx.createBuffer(1, fLen, sr);
+      var fd = fBuf.getChannelData(0);
+      for(var fi=0;fi<fLen;fi++) fd[fi]=Math.random()*2-1;
+      var fSrc = ctx.createBufferSource(); fSrc.buffer=fBuf; fSrc.loop=true;
+      var fBP = ctx.createBiquadFilter(); fBP.type="bandpass"; fBP.frequency.value=2200; fBP.Q.value=0.45;
+      var fG = ctx.createGain(); fG.gain.value=0.05;
+      fSrc.connect(fBP); fBP.connect(fG); fG.connect(master); fSrc.start(t); fSrc.stop(t+dur+0.1);
+
+      /* 筒身低频嗡鸣 */
+      var humO = ctx.createOscillator(); humO.type="sine"; humO.frequency.value=145;
+      var humG = ctx.createGain(); humG.gain.setValueAtTime(0.035,t); humG.gain.setTargetAtTime(0,t+0.4,0.5);
+      humO.connect(humG); humG.connect(master); humO.start(t); humO.stop(t+dur+0.1);
+
+      /* 撞击脉冲调度器 */
+      var impacts = [], ct = 0, phase=0;
+      /* 阶段1: 起势 0-0.3s */
+      for(var a=0;a<4;a++){ ct+= 85-a*12; if(ct<300){ impacts.push({t:ct,amp:0.12+a*0.125,pitch:1000+Math.random()*1000}); }}
+      /* 阶段2: 密集碰撞 0.3-1.3s */
+      while(ct<1300){
+        var gap = 32+Math.random()*28;
+        ct+=gap; if(ct>=1300) break;
+        var prog=(ct-300)/1000, env=0.32+(Math.random()*0.48)*(1-prog);
+        impacts.push({t:ct,amp:env,pitch:1000+Math.random()*1000});
+      }
+      /* 阶段3: 衰减 1.3-1.5s */
+      while(ct<1500){
+        var gap2=50+Math.random()*75; ct+=gap2; if(ct>1500) break;
+        var prog2=(ct-1300)/200, env2=0.38*(1-prog2);
+        impacts.push({t:ct,amp:env2,pitch:1000+Math.random()*800});
+      }
+
+      for(var i=0;i<impacts.length;i++){
+        var im=impacts[i], it=t+im.t/1000;
+        if(it>t+dur) continue;
+
+        /* 撞击瞬态（高频click） */
+        var cLen=Math.floor(sr*0.003), cBuf=ctx.createBuffer(1,cLen,sr), cd=cBuf.getChannelData(0);
+        for(var ci=0;ci<cLen;ci++) cd[ci]=Math.random()*2-1;
+        var cSrc=ctx.createBufferSource(); cSrc.buffer=cBuf;
+        var cHP=ctx.createBiquadFilter(); cHP.type="highpass"; cHP.frequency.value=4000;
+        var cG=ctx.createGain(); cG.gain.setValueAtTime(im.amp*0.6,it); cG.gain.exponentialRampToValueAtTime(0.001,it+0.008);
+        cSrc.connect(cHP); cHP.connect(cG); cG.connect(master); cSrc.start(it);
+
+        /* 竹木共振主体 */
+        var o1=ctx.createOscillator(); o1.type="sine"; o1.frequency.value=im.pitch;
+        var o1g=ctx.createGain(); o1g.gain.setValueAtTime(im.amp,it); o1g.gain.exponentialRampToValueAtTime(0.001,it+0.05+Math.random()*0.02);
+        o1.connect(o1g); o1g.connect(master); o1.start(it); o1.stop(it+0.08);
+
+        /* 偶发泛音亮撞击(~30%概率) */
+        if(Math.random()<0.3){
+          var o2=ctx.createOscillator(); o2.type="sine"; o2.frequency.value=im.pitch*(2.1+Math.random()*0.6);
+          var o2g=ctx.createGain(); o2g.gain.setValueAtTime(im.amp*0.25,it); o2g.gain.exponentialRampToValueAtTime(0.001,it+0.02);
+          o2.connect(o2g); o2g.connect(master); o2.start(it); o2.stop(it+0.025);
+        }
+      }
+
+      _shakeSrc={stop:function(w){try{master.gain.cancelScheduledValues(ctx.currentTime);master.gain.setTargetAtTime(0,ctx.currentTime,0.02);master.disconnect();}catch(e){}}};
+      _shakeGain=master;
+      setTimeout(function(){try{_shakeSrc.stop(ctx.currentTime);}catch(e){}_shakeSrc=null;_shakeGain=null;},dur*1000+100);
+    } catch(e){_shakeSrc=null;_shakeGain=null;}
+  }
+  function stopShake(){
+    if (_shakeGain){
+      try{ _shakeGain.gain.cancelScheduledValues(ctx.currentTime); _shakeGain.gain.setTargetAtTime(0,ctx.currentTime,0.02); }catch(e){}
+    }
+    if (_shakeSrc){ try{_shakeSrc.stop(ctx.currentTime+0.05);}catch(e){} }
+    _shakeSrc=null; _shakeGain=null;
+  }
+  /* ---- 出签咔哒声：正弦波(1000Hz) + 快速ADSR + 高频泛音 + 噪声瞬态 ---- */
+  function playDraw(){
+    if (muted || !ctxReady()) return;
+    try {
+      var t = ctx.currentTime, g = ctx.createGain();
+      g.gain.setValueAtTime(0.55, t); g.gain.exponentialRampToValueAtTime(0.001, t+0.12);
+      /* 基频正弦 ~1000Hz（竹木质感） */
+      var o1 = ctx.createOscillator(); o1.type = "sine"; o1.frequency.value = 1000;
+      o1.connect(g); o1.start(t); o1.stop(t+0.13);
+      /* 泛音 ×2 增加木头/脆感 */
+      var o2 = ctx.createOscillator(); o2.type = "sine"; o2.frequency.value = 2140;
+      var g2 = ctx.createGain(); g2.gain.setValueAtTime(0.18, t); g2.gain.exponentialRampToValueAtTime(0.001, t+0.06);
+      o2.connect(g2); g2.connect(g); o2.start(t); o2.stop(t+0.07);
+      /* 噪声瞬态 <15ms 模拟撞击 */
+      var nsLen = Math.floor(ctx.sampleRate*0.015), nBuf = ctx.createBuffer(1,nsLen,ctx.sampleRate);
+      var nd = nBuf.getChannelData(0); for(var i=0;i<nsLen;i++) nd[i]=Math.random()*2-1;
+      var nSrc = ctx.createBufferSource(); nSrc.buffer = nBuf;
+      var ng = ctx.createGain(); ng.gain.setValueAtTime(0.35,t); ng.gain.exponentialRampToValueAtTime(0.001,t+0.015);
+      nSrc.connect(ng); ng.connect(g); nSrc.start(t);
+      g.connect(ctx.destination);
+    } catch(e){}
+  }
+  /* ---- 磬音：基频(880Hz) + 多谐波(×2,×3,×5) + 慢指数衰减 ~2s ---- */
+  function playChime(){
+    if (muted || !ctxReady()) return;
+    try {
+      var t = ctx.currentTime, master = ctx.createGain();
+      master.gain.setValueAtTime(0.40, t); master.gain.setTargetAtTime(0, t+0.05, 0.45);
+      var freqs = [880, 1761, 2640, 4400], gains = [1, 0.28, 0.12, 0.05];
+      for (var i=0;i<freqs.length;i++){
+        var o = ctx.createOscillator(); o.type = "sine"; o.frequency.value = freqs[i];
+        var og = ctx.createGain(); og.gain.setValueAtTime(gains[i], t);
+        o.connect(og); og.connect(master); o.start(t); o.stop(t+3);
+      }
+      master.connect(ctx.destination);
+      setTimeout(function(){try{master.disconnect();}catch(e){}}, 2500);
+    } catch(e){}
+  }
+  /* 静音状态持久化（并入主键 qigegua.v1 的 mute 字段，消除双键） */
+  function _loadMute(){ try{ var r=localStorage.getItem("qigegua.v1"); if(r){var d=JSON.parse(r); muted=d.mute===true;} }catch(e){} }
+  function _saveMute(){ try{ var r=localStorage.getItem("qigegua.v1"),d=r?JSON.parse(r):{schema:CONFIG.schema,records:[]}; d.mute=muted; localStorage.setItem("qigegua.v1",JSON.stringify(d)); }catch(e){} }
+  _loadMute();
+  return {
+    get muted(){ return muted; },
+    init: ctxReady,
+    resumeIfSuspended: function(){ if(ctx && ctx.state==="suspended") try{ctx.resume();}catch(e){} },
+    playShake: playShake,
+    stopShake: stopShake,
+    playDraw: playDraw,
+    playChime: playChime,
+    toggleMute: function(){ muted=!muted; _saveMute(); return muted; }
+  };
+})();
+
+/* ==================== §G UI 渲染 / 事件 ==================== */
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function colorChips(arr){ return arr.map(function(c){ return '<span class="swatch" style="background:'+c[1]+'"></span>'+esc(c[0]); }).join(" "); }
+
+function cardHtml(rec, opts){
+  opts = opts || {};
+  var s = rec.snap, tier = s.tier;
+  var showResolve = CONFIG.resolveTiers.indexOf(tier) >= 0;
+  /* P2 美术：签结果页仙鹤（根据签级调整色调） */
+  var craneColor = tier === "上上" || tier === "上" ? "#c9a227"
+    : tier === "中下" || tier === "下" || tier === "下下" ? "#3a5a7a" : "#8b6914";
+  var html = '<div class="card" id="card-'+rec.d+'" style="position:relative;overflow:hidden">'
+    /* P2 美术：右上角仙鹤剪影 */
+    + '<svg class="result-crane" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><g fill="'+craneColor+'" opacity=".12">'
+    + '<path d="M55 25 Q50 18 54 12 Q58 6 66 5 Q74 4 78 10 Q82 16 78 22 Q74 28 68 30"/>'
+    + '<ellipse cx="60" cy="30" rx="10" ry="7"/>'
+    + '<path d="M52 27 Q46 20 43 14 Q41 9 44 5 Q47 2 51 4 Q54 8 52 14 Q50 20 54 26"/>'
+    + '<circle cx="45" cy="6" r="2.5"/>'
+    + '<path d="M56 35 Q42 28 30 25 Q20 23 14 26 Q22 30 32 34 Q44 39 54 42"/>'
+    + '<path d="M64 35 Q76 28 86 25 Q94 24 98 28 Q90 33 80 37 Q68 42 62 43"/>'
+    + '<path d="M68 36 Q80 38 88 35 Q94 34 96 38 Q90 44 82 46 Q74 48 70 44"/>'
+    + '<line x1="57" y1="40" x2="54" y2="55"/><line x1="63" y1="40" x2="66" y2="55"/>'
+    + '</g></svg>'
+    + '<div><span class="tier-badge" style="background:'+TIER_COLOR[tier]+'">'+esc(tier)+'</span>'
+    + '第'+s.no+'签 · '+esc(s.name)+'　'+GUA_SYMBOL[MEI.numOf(s.upper)]+GUA_SYMBOL[MEI.numOf(s.lower)]+'</div>'
+    + '<div class="muted">'+esc(s.theme)+'　·　'+(rec.type === "daily" ? "每日一签" : "问事之占")+'</div>'
+    + (rec.q ? '<div class="muted">所问：'+esc(rec.q)+'</div>' : '')
+    + '<div class="poem">'+esc(s.poem)+'</div>'
+    + '<div style="font-size:13px;line-height:1.8;margin-top:6px">'+esc(s.jie)+'</div>'
+    + '<div class="slotlist">'
+    + '<div><b>体用</b>（'+esc(s.relMain)+'）：'+esc(s.slots.tiyong)+'</div>'
+    + '<div><b>旺衰</b>（'+esc(s.wsTi)+'）：'+esc(s.slots.ws)+'</div>'
+    + '<div><b>动爻</b>（'+s.moving+' 爻）：'+esc(s.slots.move)+'</div>'
+    + '<div><b>变卦</b>（'+esc(s.bianName)+'，'+esc(s.relBian)+'）：'+esc(s.slots.bian)+'</div>'
+    + '</div>'
+    + '<div class="idx-line">吉凶指数 '+s.index+'　·　月支'+esc(s.mb)+'　日柱'+esc(s.dayGZ)+'　'+esc(s.lunarStr)+'</div>';
+  if (showResolve){
+    /* P2 美术：化解区域 · 莲灯仪式框架 */
+    html += '<div id="resolve-area-'+rec.d+'" class="'+(opts.showResolve ? "" : "hidden")+'">'
+      + '<div class="resolve-frame">'
+      /* 莲灯 */
+      + '<div class="lotus-lamp-container">'
+      + '<svg class="lotus-lamp-svg" viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+      + '<defs><radialGradient id="lampGlow" cx="50%" cy="45%" r="55%"><stop offset="0%" stop-color="#f5e6b8" stop-opacity=".9"/><stop offset="60%" stop-color="#d4a855" stop-opacity=".4"/><stop offset="100%" stop-color="#a67c30" stop-opacity="0"/></radialGradient></defs>'
+      + '<ellipse cx="30" cy="42" rx="22" ry="8" fill="url(#lampGlow)"/>'
+      /* 莲花瓣 */
+      + '<ellipse cx="30" cy="48" rx="18" ry="5" fill="#d4a0a0" opacity=".7" stroke="#c4756e" stroke-width="0.8"/>'
+      + '<ellipse cx="22" cy="50" rx="8" ry="4" fill="#e8c4c4" opacity=".6" stroke="#d4a0a0" stroke-width="0.5" transform="rotate(-25 22 50)"/>'
+      + '<ellipse cx="38" cy="50" rx="8" ry="4" fill="#e8c4c4" opacity=".6" stroke="#d4a0a0" stroke-width="0.5" transform="rotate(25 38 50)"/>'
+      + '<ellipse cx="30" cy="52" rx="7" ry="3.5" fill="#f0d8d8" opacity=".5" stroke="#d4a0a0" stroke-width="0.5"/>'
+      /* 灯芯/火焰 */
+      + '<path d="M27 42 Q30 34 33 42 Q30 46 27 42" fill="#f5e6b8" stroke="#c9a227" stroke-width="0.8"/>'
+      + '<path d="M29 40 Q30 36 31 40" fill="none" stroke="#fff8ef" stroke-width="0.5" opacity=".7"/>'
+      + '</svg></div>'
+      /* 化解三件套 */
+      + '<div class="resolve-three">'
+      + '<div class="resolve-item"><span class="resolve-num">壹</span><div class="resolve-text"><b>穿衣</b>：宜 '+colorChips(s.resolve.good)+'　少穿 '+colorChips(s.resolve.avoid)+'</div></div>'
+      + '<div class="resolve-item"><span class="resolve-num">贰</span><div class="resolve-text"><b>方位</b>：办事会谈宜选你所在位置的<b>'+esc(s.resolve.dir)+'</b>方</div></div>'
+      + '<div class="resolve-item"><span class="resolve-num">叁</span><div class="resolve-text"><b>一件小事</b>：'+esc(s.resolve.deed)+'</div></div>'
+      + '</div>'
+      + '<div class="resolve-footer">卦示其势，人行其事。愿你顺时自渡。</div>'
+      + '</div></div>'
+      + '<button class="btn-sub" data-resolve="'+rec.d+'">'+(rec.hd ? "化解建议（已看过）" : "化 解")+'</button>';
+  } else if (tier === "中"){
+    html += '<div class="muted" style="margin-top:8px">'+esc(CONFIG.midHint)+'</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderQiuResult(rec, hint, animate){
+  var box = document.getElementById("qiu-result");
+  box.innerHTML = (rec ? cardHtml(rec, { showResolve: rec.hd === 1 }) : "")
+    + (hint ? '<div id="qiu-hint" class="muted" style="text-align:center;margin-top:6px">'+esc(hint)+'</div>' : "");
+  /* §ANIM ② 出签卡入场：淡入+上移 */
+  if (animate && rec){
+    var card = box.querySelector(".card");
+    if (card){ card.classList.add("card-enter"); requestAnimationFrame(function(){ card.classList.add("show"); }); }
+    /* §ANIM ③ 签级揭示：延迟微弹 */
+    var badge = box.querySelector(".tier-badge");
+    if (badge){ setTimeout(function(){ badge.classList.add("tier-reveal"); }, 380); }
+    /* §ANIM ④ 化解按钮呼吸（仅中下/下/下下） */
+    var resolveBtn = box.querySelector("[data-resolve]");
+    if (resolveBtn && !rec.hd){ setTimeout(function(){ resolveBtn.classList.add("resolve-pulse"); }, 600); }
+  }
+}
+function setBanner(msg, warn){
+  var b = document.getElementById("banner");
+  if (!msg){ b.className = "hidden"; b.textContent = ""; return; }
+  b.className = warn ? "warn" : "";
+  b.textContent = msg;
+}
+function renderQiu(){
+  var btn = document.getElementById("btn-draw");
+  if (App.state.outOfRange){
+    btn.disabled = true;
+    setBanner("本机日期超出历法支持范围（1900–2100）。调整系统时间后即可正常使用。", true);
+  } else if (!Store.available()){
+    setBanner(Store.reason(), false);
+  }
+}
+function renderHuangli(){
+  var box = document.getElementById("huangli-body");
+  var ds = App.state.huangliDate || App.todayStr;
+  var parts = ds.split("-"), hy = +parts[0], hm = +parts[1], hd = +parts[2];
+  var p = { y: hy, m: hm, d: hd };
+  if (App.state.outOfRange || !CAL.inRange(hy, hm, hd)){
+    box.innerHTML = '<div class="card"><h3>黄历</h3><div class="muted">所选日期超出历法支持范围（1900–2100），黄历暂不可用。</div></div>';
+    return;
+  }
+  var lunar = CAL.solarToLunar(hy,hm,hd);
+  var yg = CAL.yearGanzhi(hy,hm,hd);
+  var jdn = CAL.jdn(hy,hm,hd);
+  var dgz = CAL.dayGanzhi(jdn);
+  var mb = CAL.solarMonthBranch(hm,hd);
+  var mg = CAL.monthGanzhi(yg.g, mb);
+  var shen = HL.jianchu(dgz.z, mb);
+  var yiji = SHEN_YIJI[shen];
+  var cs = HL.chongsha(dgz.z);
+  var dress = HL.dressGuide(dgz.g);
+  var zodiac = ZODIAC_OF[yg.z];
+  var wd = "日一二三四五六"[new Date(hy, hm-1, hd).getDay()];
+  var isToday = (ds === App.todayStr);
+  var prevD = new Date(hy, hm-1, hd - 1), nextD = new Date(hy, hm-1, hd + 1);
+  var prevStr = prevD.getFullYear() + "-" + pad2(prevD.getMonth()+1) + "-" + pad2(prevD.getDate());
+  var nextStr = nextD.getFullYear() + "-" + pad2(nextD.getMonth()+1) + "-" + pad2(nextD.getDate());
+  var canPrev = CAL.inRange(prevD.getFullYear(), prevD.getMonth()+1, prevD.getDate());
+  var canNext = CAL.inRange(nextD.getFullYear(), nextD.getMonth()+1, nextD.getDate());
+
+  var html = '<div id="huangli-head">'
+    + '<button id="hl-prev"' + (canPrev ? '' : ' disabled style="opacity:0.3"') + '>&#8249; 前一天</button>'
+    + '<span class="hl-date">'+hy+'年'+hm+'月'+hd+'日' + (isToday ? ' · <b>今天</b>' : '') + ' <button id="hl-today" class="hl-today"' + (isToday ? ' disabled style="opacity:0"' : '') + '>回今天</button></span>'
+    + '<button id="hl-next"' + (canNext ? '' : ' disabled style="opacity:0.3"') + '>后一天 &#8250;</button>'
+    + '</div>'
+    /* P2 美术：祥云分隔 */
+    + '<div class="cloud-divider"><svg viewBox="0 0 120 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 16 Q10 10 20 10 Q22 4 32 6 Q40 0 52 6 Q60 2 72 6 Q82 2 92 8 Q100 6 108 12 Q114 12 118 16 Q110 18 10 16Z" fill="#7a7060"/></svg></div>'
+    + '<div class="card"><h3>' + (isToday ? '今日黄历' : '黄历') + '</h3>'
+    /* P2 美术：干支信息网格化 */
+    + '<div class="ganzhi-block">'
+    + '<div class="ganzhi-cell"><span class="gz-label">年柱</span><span class="gz-val">'+esc(yg.g+yg.z)+'</span></div>'
+    + '<div class="ganzhi-cell"><span class="gz-label">月柱</span><span class="gz-val">'+esc(mg.g+mg.z)+'</span></div>'
+    + '<div class="ganzhi-cell"><span class="gz-label">日柱</span><span class="gz-val">'+esc(dgz.g+dgz.z)+'</span></div>'
+    + '<div class="ganzhi-cell"><span class="gz-label">建除</span><span class="gz-val">'+shen+'</span></div>'
+    + '</div>'
+    + '<div class="hl-row"><span class="k">公历</span><span>'+hy+'年'+hm+'月'+hd+'日 · 星期'+wd+'</span></div>'
+    + '<div class="hl-row"><span class="k">农历</span><span>'+esc(yg.g+yg.z+zodiac+'年 '+CAL.lunarMonthName(lunar.m,lunar.leap)+CAL.lunarDayName(lunar.d))+'</span></div>'
+    /* P2 美术：宜忌标签化 */
+    + '<div class="hl-row" style="align-items:flex-start"><span class="k" style="padding-top:5px">宜</span><span><div class="yi-ji-row">';
+    /* 将宜事项拆分为独立标签 */
+    yiji.yi.split('、').forEach(function(item){
+      if(item.trim()) html += '<span class="yi-tag"><span class="hl-icon">✦</span>'+esc(item.trim())+'</span>';
+    });
+    html += '</div></span></div>'
+    + '<div class="hl-row" style="align-items:flex-start"><span class="k" style="padding-top:5px">忌</span><span><div class="yi-ji-row">';
+    yiji.ji.split('、').forEach(function(item){
+      if(item.trim()) html += '<span class="ji-tag"><span class="hl-icon">✗</span>'+esc(item.trim())+'</span>';
+    });
+    html += '</div></span></div>'
+    + '<div class="hl-row"><span class="k">冲煞</span><span>冲'+esc(cs.chong)+'　煞'+esc(cs.sha)+'</span></div>'
+    + '</div>'
+    + '<div class="card"><h3>五行穿衣（日干'+esc(dgz.g)+'属'+HL.dayGanWuxing(dgz.g)+'）</h3>';
+  /* P2 美术：穿衣色丸化 */
+  ["大吉","次吉","一般","慎用","不宜"].forEach(function(k){
+    var g = dress[k];
+    html += '<div class="colorline"><span class="grp">'+k+'</span>';
+    g.colors.forEach(function(c){
+      html += '<span class="dress-pill"><span class="swatch" style="background:'+c[1]+'"></span><span>'+esc(c[0])+'</span><span class="dress-rel">'+esc(g.rel)+'</span></span>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  box.innerHTML = html;
+}
+function renderYueli(){
+  var t0 = performance.now();
+  var box = document.getElementById("yueli-body");
+  var ym = App.state.calMonth, y = +ym.slice(0,4), m = +ym.slice(5,7);
+  var first = new Date(y, m-1, 1), days = new Date(y, m, 0).getDate();
+  var lead = first.getDay();
+  var recMap = {};
+  Store.records().forEach(function(r){ if (r.d.slice(0,7) === ym) (recMap[r.d] = recMap[r.d] || []).push(r); });
+  var html = '<div id="yueli-head"><button id="cal-prev">‹</button><span class="ym">'+y+'年'+m+'月</span><button id="cal-next">›</button><button class="btn-export" id="btn-export" title="导出全部求签记录为文本文件">📋 导出记录</button></div>'
+    /* P2 美术：祥云分隔 */
+    + '<div class="cloud-divider"><svg viewBox="0 0 120 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 16 Q10 10 20 10 Q22 4 32 6 Q40 0 52 6 Q60 2 72 6 Q82 2 92 8 Q100 6 108 12 Q114 12 118 16 Q110 18 10 16Z" fill="#7a7060"/></svg></div>'
+    + '<div id="cal-grid">';
+  for (var i=0;i<7;i++) html += '<div class="wd">'+"日一二三四五六"[i]+'</div>';
+  for (var i2=0;i2<lead;i2++) html += '<div class="cell off"></div>';
+  for (var d=1; d<=days; d++){
+    var ds = y + "-" + pad2(m) + "-" + pad2(d);
+    var cls = "cell" + (ds === App.todayStr ? " today" : "");
+    var dot = "";
+    if (recMap[ds]){
+      var last = recMap[ds][recMap[ds].length-1];
+      dot = '<span class="dot'+(last.hd ? " done" : "")+'" style="background:'+TIER_COLOR[last.lv]+'"></span>';
+    }
+    html += '<div class="'+cls+'" data-day="'+ds+'">'+d+dot+'</div>';
+  }
+  html += '</div><div id="legend">签级色点：';
+  TIERS.forEach(function(t){ html += '<span class="dot" style="background:'+TIER_COLOR[t]+'"></span>'+t; });
+  html += '<br>色点描边 = 已看过化解建议。点日期可回看当日记录。</div>';
+  box.innerHTML = html;
+  PERF.calMs.push(performance.now()-t0);
+}
+function renderDrawer(ds){
+  var drawer = document.getElementById("drawer");
+  var recs = App.recordsByDate(ds);
+  var html = '<button class="d-close" id="drawer-close">✕</button><h4>'+ds+' · 当日记录</h4>';
+  if (!recs.length){
+    html += '<div class="muted">此日无记录。</div>';
+  } else {
+    recs.slice().reverse().forEach(function(r){
+      html += '<div class="rec-item" data-rec="'+r.d+'|'+r.t+'">'
+        + '<span class="dot'+(r.hd ? " done" : "")+'" style="background:'+TIER_COLOR[r.lv]+'"></span>'
+        + '<span class="t">'+(r.type === "daily" ? "每日一签" : "问事")+' · '+esc(r.hex)+' · '+esc(r.lv)+'<br><span class="muted">'+esc(r.sum)+'</span></span></div>';
+    });
+  }
+  drawer.innerHTML = html;
+  drawer.className = "";
+}
+function closeDrawer(){ document.getElementById("drawer").className = "hidden"; }
+
+function route(){
+  var h = (typeof location !== "undefined") ? location.hash : "";
+  if (h === "#dev"){ renderDev(); return; }
+  var view = "qiu";
+  if (h === "#/huangli") view = "huangli";
+  else if (h === "#/yueli") view = "yueli";
+  /* §ANIM ⑥ 页面切换：仅在有实际切换时播交叉淡化 */
+  if (view !== App.state.view){
+    var prevView = App.state.view || "qiu";
+    var prevEl = document.getElementById("view-"+prevView);
+    var currEl = document.getElementById("view-"+view);
+    if (prevEl){ prevEl.classList.add("fade-out"); prevEl.classList.remove("fade-in"); }
+    if (currEl){ currEl.classList.remove("hidden","fade-out"); currEl.classList.add("fade-in");
+      /* 动画结束后清理 class */
+      setTimeout(function(){
+        ["qiu","huangli","yueli"].forEach(function(v){
+          var el = document.getElementById("view-"+v);
+          if (el) el.classList.remove("fade-out","fade-in");
+        });
+      }, 320);
+    }
+    /* 隐藏非当前视图（延迟到 fade-out 开始后） */
+    setTimeout(function(){
+      ["qiu","huangli","yueli"].forEach(function(v){
+        if (v !== view) document.getElementById("view-"+v).className = "view hidden";
+      });
+    }, 120);
+  }
+  App.state.view = view;
+  var tabs = document.querySelectorAll("#tabbar a");
+  for (var i=0;i<tabs.length;i++) tabs[i].className = (tabs[i].getAttribute("data-view") === view) ? "on" : "";
+  document.getElementById("topdate").textContent = App.todayStr + (App.state.outOfRange ? "（历法超范围）" : "");
+  if (view === "huangli") renderHuangli();
+  if (view === "yueli"){ renderYueli(); closeDrawer(); }
+}
+
+function onDraw(){
+  var btn = document.getElementById("btn-draw");
+  var cylinder = document.querySelector(".sign-cylinder-svg");
+  var cylinderArea = document.querySelector(".sign-cylinder-area");
+  if (!btn.classList.contains("shaking")){
+    AudioMgr.init();
+    AudioMgr.playShake();
+    if (cylinder) cylinder.classList.add("cylinder-shaking");
+    if (cylinderArea) cylinderArea.classList.add("shaking-hint");
+    btn.classList.add("btn-pressing");
+    btn.disabled = true;
+    setTimeout(function(){
+      if (cylinder) cylinder.classList.remove("cylinder-shaking");
+      if (cylinderArea) cylinderArea.classList.remove("shaking-hint");
+      btn.classList.remove("btn-pressing");
+      btn.disabled = false;
+      _doDraw();
+    }, 1900);
+    return;
+  }
+  function _doDraw(){
+    var t0 = performance.now();
+    var q = document.getElementById("q-input").value;
+    var res = App.draw(q);
+    PERF.drawMs.push(performance.now()-t0);
+    if (res.error){ setBanner(res.error, true); renderQiuResult(null); AudioMgr.stopShake(); return; }
+    setBanner("");
+    renderQiuResult(res.rec, res.hint, true);
+    AudioMgr.stopShake();
+    AudioMgr.playDraw();
+    document.getElementById("qiu-result").scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+}
+function onResolve(d){
+  /* §ANIM ⑤ 化解仪式：全屏光晕 + 三息提示 */
+  _playRitual(d);
+  AudioMgr.playChime();
+  var recs = Store.records();
+  for (var i=0;i<recs.length;i++){
+    if (recs[i].d === d && !recs[i].hd){ recs[i].hd = 1; Store.touch(); break; }
+  }
+  var rec = App.recordsByDate(d).filter(function(r){ return r.hd === 1; })[0]
+         || App.recordsByDate(d)[App.recordsByDate(d).length-1];
+  if (rec){ renderQiuResult(rec, null); }
+  var area = document.querySelector("#resolve-area-"+d);
+  if (area) area.className = "";
+  if (App.state.view === "yueli") renderYueli();
+}
+/* §ANIM ⑤ 化解仪式：创建/移除仪式遮罩层 */
+function _playRitual(d){
+  var ov = document.createElement("div");
+  ov.className = "ritual-overlay";
+  ov.id = "ritual-"+d;
+  ov.innerHTML = '<div class="ritual-lotus"></div>'
+    + '<div class="ritual-breath">随息三巡 · 心定则灵</div>'
+    + '<div class="ritual-done">灯下得方</div>';
+  document.body.appendChild(ov);
+  requestAnimationFrame(function(){ ov.offsetHeight; }); /* force reflow */
+  /* 三息约 3.5s×3 = ~10.5s，但用户可点击关闭 */
+  ov.addEventListener("click", function _close(){
+    ov.removeEventListener("click", _close);
+    ov.classList.add("complete");
+    setTimeout(function(){ try{ov.parentNode.removeChild(ov);}catch(e){} }, 700);
+  });
+  /* 自动完成兜底（~4s 后标记完成） */
+  setTimeout(function(){
+    if (ov.parentNode){ ov.classList.add("complete"); setTimeout(function(){ try{ov.parentNode.removeChild(ov);}catch(e){} }, 700); }
+  }, 4000);
+}
+function onDayClick(ds){ renderDrawer(ds); }
+function onRecClick(key){
+  var parts = key.split("|"), d = parts[0], t = +parts[1];
+  var rec = App.recordsByDate(d).filter(function(r){ return r.t === t; })[0];
+  if (!rec) return;
+  var drawer = document.getElementById("drawer");
+  drawer.innerHTML = '<button class="d-close" id="drawer-close">✕</button>' + cardHtml(rec, { showResolve: rec.hd === 1 });
+  drawer.className = "";
+}
+function onCalNav(dir){
+  var ym = App.state.calMonth, y = +ym.slice(0,4), m = +ym.slice(5,7);
+  m += dir;
+  if (m < 1){ m = 12; y--; } if (m > 12){ m = 1; y++; }
+  App.state.calMonth = y + "-" + pad2(m);
+  renderYueli();
+}
+function onHlNav(dir){
+  /* §ANIM ⑦ 黄历翻页：先淡出 → 再渲染 → 再淡入 */
+  var body = document.getElementById("huangli-body");
+  if (body) { body.classList.add("flip-out"); body.classList.remove("flip-in"); }
+  var ds = App.state.huangliDate || App.todayStr;
+  var parts = ds.split("-"), y = +parts[0], m = +parts[1], d = +parts[2];
+  var dt = new Date(y, m-1, d + dir);
+  var ny = dt.getFullYear(), nm = dt.getMonth()+1, nd = dt.getDate();
+  if (CAL.inRange(ny, nm, nd)){
+    App.state.huangliDate = ny + "-" + pad2(nm) + "-" + pad2(nd);
+    setTimeout(function(){
+      renderHuangli();
+      var b2 = document.getElementById("huangli-body");
+      if (b2){ b2.classList.remove("flip-out"); b2.classList.add("flip-in"); }
+    }, 130);
+  } else {
+    /* 越界时恢复显示 */
+    setTimeout(function(){ if(body){ body.classList.remove("flip-out"); body.classList.add("flip-in"); } }, 140);
+  }
+}
+function onInput(){
+  var n = normalizeQ(document.getElementById("q-input").value).length;
+  document.getElementById("q-count").textContent = "已入 " + n + " 字 · 卦数 " + n;
+}
+
+/* ==================== §H Dev runConformance（#dev 激活；对拍输出与 tests/baseline.json 逐字段比对） ==================== */
+function panSubset(pan){
+  var t = pan["体用"], a = pan["辅助信息"];
+  function gua(x){ return {"上卦":x["上卦"],"下卦":x["下卦"],"卦名":x["卦名"],"卦序":x["卦序"]}; }
+  return {
+    "本卦": gua(pan["本卦"]), "动爻": pan["动爻"],
+    "互卦": gua(pan["互卦"]), "变卦": gua(pan["变卦"]),
+    "错卦": gua(pan["错卦"]), "综卦": gua(pan["综卦"]),
+    "体用": {"体卦":t["体卦"],"用卦":t["用卦"],"体卦位置":t["体卦位置"],"用卦位置":t["用卦位置"],
+             "体卦五行":t["体卦五行"],"用卦五行":t["用卦五行"],"变卦用卦":t["变卦用卦"],"变卦用卦五行":t["变卦用卦五行"],
+             "主卦关系":t["主卦关系"],"主卦吉凶":t["主卦吉凶"],"变卦关系":t["变卦关系"],"变卦吉凶":t["变卦吉凶"]},
+    "月支": a["月支"], "日柱": a["日柱"], "旬空": a["旬空"],
+    "体卦旺衰": a["体卦旺衰"], "用卦旺衰": a["用卦旺衰"],
+    "体卦长生": a["体卦长生"], "用卦长生": a["用卦长生"],
+    "月德": a["月德"], "驿马": a["驿马"], "桃花": a["桃花"], "日禄": a["日禄"],
+    "落空之卦": a["落空之卦"]
+  };
+}
+function conformanceCases(){
+  var cases = {};
+  function timeCase(id, y, mo, d, h, mb){
+    var lunar = CAL.solarToLunar(y,mo,d);
+    var out = { kind:"time" };
+    out.lunar = [lunar.y, lunar.m, lunar.d, lunar.leap ? 1 : 0];
+    var yg = CAL.yearGanzhi(y,mo,d);
+    out.year = yg.g + yg.z;
+    var mbu = mb || CAL.solarMonthBranch(mo,d);
+    out.mb = mbu;
+    var mg = CAL.monthGanzhi(yg.g, mbu);
+    out.month = mg.g + mbu;
+    var dgz = CAL.dayGanzhi(CAL.jdn(y,mo,d) + (h >= 23 ? 1 : 0));
+    out.day = dgz.g + dgz.z;
+    var hg = CAL.hourGanzhi(dgz.g, h);
+    out.hour = hg.g + hg.z;
+    var g = MEI.qiguaByTime(ZHI.indexOf(yg.z)+1, lunar.m, lunar.d, ZHI.indexOf(hg.z)+1);
+    out.qigua = [g.u, g.l, g.m];
+    var pan = MEI.paipan(g.u, g.l, g.m);
+    MEI.enrich(pan, mbu, dgz.g, dgz.z);
+    out.pan = panSubset(pan);
+    cases[id] = out;
+  }
+  function plainCase(id, g, mb, dg, dz, kind){
+    var pan = MEI.paipan(g.u, g.l, g.m);
+    MEI.enrich(pan, mb, dg, dz);
+    cases[id] = { kind: kind, qigua: [g.u, g.l, g.m], pan: panSubset(pan) };
+  }
+  function rtLunar(id, ly, lm, ld, leap){
+    var s = CAL.lunarToSolar(ly, lm, ld, leap);
+    var lu = CAL.solarToLunar(s.y, s.m, s.d);
+    cases[id] = { kind:"rt", solar:[s.y,s.m,s.d], lunar:[lu.y,lu.m,lu.d,lu.leap?1:0] };
+  }
+  function rtSolar(id, y, mo, d){
+    var lu = CAL.solarToLunar(y,mo,d);
+    var s = CAL.lunarToSolar(lu.y, lu.m, lu.d, lu.leap);
+    cases[id] = { kind:"rt", solar:[s.y,s.m,s.d], lunar:[lu.y,lu.m,lu.d,lu.leap?1:0] };
+  }
+  /* 时间起卦 12（主跑：月支显式，与基准同值） */
+  timeCase("t01",2025,1,15,10,"丑"); timeCase("t02",2025,3,20,14,"卯");
+  timeCase("t03",2025,4,8,6,"辰");   timeCase("t04",2025,7,10,13,"未");
+  timeCase("t05",2025,7,20,8,"未");  timeCase("t06",2026,2,3,12,"丑");
+  timeCase("t07",2026,2,5,12,"寅");  timeCase("t08",2026,5,12,18,"巳");
+  timeCase("t09",2026,9,17,15,"酉"); timeCase("t10",2026,11,30,22,"亥");
+  timeCase("t11",2026,11,30,23,"亥");timeCase("t12",2026,12,21,0,"子");
+  /* 节气月支近似路径 4（JS 自动推月支，验证近似表） */
+  timeCase("a01",2026,2,3,12,null); timeCase("a02",2026,2,5,12,null);
+  timeCase("a03",2025,6,6,9,null);  timeCase("a04",2026,1,5,10,null);
+  /* 农历↔公历往返 24 + 两端点 */
+  rtLunar("r01",2024,1,1,false); rtLunar("r02",2024,4,1,false);
+  rtLunar("r03",2024,8,1,false); rtLunar("r04",2024,12,1,false);
+  rtLunar("r05",2025,1,1,false); rtLunar("r06",2025,6,1,false);
+  rtLunar("r07",2025,6,1,true);  rtLunar("r08",2025,12,1,false);
+  rtLunar("r09",2026,1,1,false); rtLunar("r10",2026,5,1,false);
+  rtLunar("r11",2026,9,1,false); rtLunar("r12",2026,11,1,false);
+  rtLunar("r13",2000,1,1,false); rtLunar("r14",1997,6,1,false);
+  rtLunar("r15",1949,10,1,false);rtLunar("r16",1976,8,1,false);
+  rtLunar("r17",1901,3,1,false); rtLunar("r18",1925,7,1,false);
+  rtLunar("r19",1958,2,1,false); rtLunar("r20",1984,11,1,false);
+  rtLunar("r21",2038,1,1,false); rtLunar("r22",2050,6,1,false);
+  rtLunar("r23",2077,4,1,false); rtLunar("r24",2099,1,1,false);
+  rtSolar("e1",1900,1,31); rtSolar("e2",2100,12,31);
+  /* 数字起卦 8 */
+  plainCase("n01", MEI.qiguaByNumbers([17,8,5]),  "酉","甲","子","num");
+  plainCase("n02", MEI.qiguaByNumbers([3,7,2]),   "酉","甲","子","num");
+  plainCase("n03", MEI.qiguaByNumbers([8,16,6]),  "酉","甲","子","num");
+  plainCase("n04", MEI.qiguaByNumbers([24,32,12]),"酉","甲","子","num");
+  plainCase("n05", MEI.qiguaByNumbers([1,1,1]),   "寅","戊","午","num");
+  plainCase("n06", MEI.qiguaByNumbers([10,9,4]),  "寅","戊","午","num");
+  plainCase("n07", MEI.qiguaByNumbers([5,13,7]),  "寅","戊","午","num");
+  plainCase("n08", MEI.qiguaByNumbers([9,18,6]),  "寅","戊","午","num");
+  /* 字数起卦 8（两口径） */
+  plainCase("c01", MEI.qiguaByCharsPlusHour(5,7),  "酉","甲","子","charPlusHour");
+  plainCase("c02", MEI.qiguaByCharsPlusHour(8,3),  "酉","甲","子","charPlusHour");
+  plainCase("c03", MEI.qiguaByCharsPlusHour(16,7), "酉","甲","子","charPlusHour");
+  plainCase("c04", MEI.qiguaByCharsPlusHour(1,1),  "酉","甲","子","charPlusHour");
+  plainCase("d01", MEI.qiguaByCharsHalf(5),  "酉","甲","子","charHalf");
+  plainCase("d02", MEI.qiguaByCharsHalf(8),  "酉","甲","子","charHalf");
+  plainCase("d03", MEI.qiguaByCharsHalf(1),  "酉","甲","子","charHalf");
+  plainCase("d04", MEI.qiguaByCharsHalf(16), "酉","甲","子","charHalf");
+  /* 字数起卦 B方案（定稿：字数掺时辰·前后半拆分）4 */
+  plainCase("b01", MEI.qiguaByCharsPlusHourB(5,7),  "酉","甲","子","charPlusHourB");
+  plainCase("b02", MEI.qiguaByCharsPlusHourB(8,3),  "酉","甲","子","charPlusHourB");
+  plainCase("b03", MEI.qiguaByCharsPlusHourB(1,1),  "酉","甲","子","charPlusHourB");
+  plainCase("b04", MEI.qiguaByCharsPlusHourB(16,7), "酉","甲","子","charPlusHourB");
+  /* 直给卦 6 */
+  plainCase("h01", {u:1,l:8,m:1}, "酉","甲","子","hex");
+  plainCase("h02", {u:3,l:6,m:2}, "酉","甲","子","hex");
+  plainCase("h03", {u:5,l:5,m:3}, "酉","甲","子","hex");
+  plainCase("h04", {u:2,l:7,m:4}, "寅","戊","午","hex");
+  plainCase("h05", {u:8,l:2,m:5}, "寅","戊","午","hex");
+  plainCase("h06", {u:6,l:4,m:6}, "寅","戊","午","hex");
+  /* 日柱锚点 2 */
+  var k1 = CAL.dayGanzhi(CAL.jdn(2000,1,1));
+  var k2 = CAL.dayGanzhi(CAL.jdn(1949,10,1));
+  cases["k1"] = { kind:"anchor", dayGanzhi: k1.g+k1.z };
+  cases["k2"] = { kind:"anchor", dayGanzhi: k2.g+k2.z };
+  return cases;
+}
+function runConformance(){
+  var cases1 = conformanceCases();
+  var cases2 = conformanceCases();
+  var det = { twiceByteEqual: JSON.stringify(cases1) === JSON.stringify(cases2) };
+  var f1 = composeDraw({u:6,l:7,m:4}, {y:2026,m:9,d:17,h:15});
+  var f2 = composeDraw({u:6,l:7,m:4}, {y:2026,m:9,d:17,h:15});
+  det.composeByteEqual = JSON.stringify(f1) === JSON.stringify(f2);   /* 全链路（含判级/签文/化解）两跑 */
+  var g = dailyGua({y:2026,m:9,d:17,h:9});
+  var dd1 = composeDraw(g, {y:2026,m:9,d:17,h:9});
+  var dd2 = composeDraw(g, {y:2026,m:9,d:17,h:21});  /* 同日不同时刻：每日一签结果唯一 */
+  det.dailySameDayEqual = JSON.stringify(dd1) === JSON.stringify(dd2);
+  var ask1 = askQigua(normalizeQ("换工作顺利吗"));
+  var ask2 = askQigua(normalizeQ("换工作顺利吗？！！"));  /* 规范化后同问 → 同卦（一事一占基） */
+  det.askNormalizedEqual = JSON.stringify(ask1) === JSON.stringify(ask2);
+  return { count: Object.keys(cases1).length, cases: cases1, determinism: det };
+}
+function renderDev(){
+  var panel = document.getElementById("devpanel");
+  var views = ["qiu","huangli","yueli"];
+  views.forEach(function(v){ document.getElementById("view-"+v).className = "view hidden"; });
+  var res = runConformance();
+  (typeof globalThis !== "undefined" ? globalThis : window).__QG_CONFORMANCE = res;
+  var det = res.determinism;
+  var detOk = det.twiceByteEqual && det.composeByteEqual && det.dailySameDayEqual && det.askNormalizedEqual;
+  panel.className = "";
+  panel.innerHTML = '<div class="card"><h3>Dev · runConformance()</h3>'
+    + '<div>对拍用例：<b>'+res.count+'</b> 个（与 tests/baseline.json 逐字段比对由开发期脚本完成）</div>'
+    + '<div>确定性断言：'+(detOk ? '<b>全部通过</b>' : '<b style="color:#a33">失败</b>')
+    + '（两跑字节一致='+det.twiceByteEqual+'，全链路两跑='+det.composeByteEqual
+    + '，每日一签同日两时='+det.dailySameDayEqual+'，规范化同问同卦='+det.askNormalizedEqual+'）</div>'
+    + '<div>PERF：boot '+PERF.bootMs.toFixed(1)+'ms；摇签 '+
+      (PERF.drawMs.length ? PERF.drawMs.map(function(x){return x.toFixed(1);}).join("/")+"ms" : "未测") +
+      '；月历渲染 '+(PERF.calMs.length ? PERF.calMs.map(function(x){return x.toFixed(1);}).join("/")+"ms" : "未测")+'</div>'
+    + '<div class="muted">完整 JSON 已挂 window.__QG_CONFORMANCE（供 Node 抽取比对）。</div></div>';
+}
+
+/* ==================== §P3 文本导出功能（B方案：纯文本 .txt 下载） ==================== */
+function exportRecords(){
+  var recs = Store.records();
+  if (!recs.length){ setBanner("暂无记录可导出。", true); return; }
+  var now = new Date();
+  var lines = [];
+  /* 标题区 */
+  var sep = "═════════════════════════════════";
+  lines.push(sep);
+  lines.push("　起个卦 · 求签记录导出");
+  lines.push(sep);
+  lines.push("导出时间：" + now.getFullYear() + "年" + (now.getMonth()+1) + "月" + now.getDate() + "日 " + pad2(now.getHours()) + ":" + pad2(now.getMinutes()));
+  lines.push("记录总数：" + recs.length + " 条");
+  lines.push("");
+  /* 逐条 */
+  for (var i = 0; i < recs.length; i++){
+    var r = recs[i], s = r.snap;
+    lines.push("───────────────────────────────");
+    lines.push("【第 " + (i+1) + " 条】" + r.d + " · " + (r.type === "daily" ? "每日一签" : "问事之占"));
+    if (r.q) lines.push("所问：" + r.q);
+    lines.push("第" + s.no + "签 · " + s.name + "（" + (GUA_SYMBOL[MEI.numOf(s.upper)]||"") + " " + (GUA_SYMBOL[MEI.numOf(s.lower)]||"") + "）· " + s.tier);
+    lines.push("主题：" + s.theme);
+    lines.push("吉凶指数 " + s.index);
+    lines.push("");
+  }
+  lines.push(sep);
+  lines.push("— 由「起个卦」导出 · 记录仅存于本机浏览器 —");
+  /* Blob + download */
+  var text = lines.join("\n");
+  var blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = "起个卦_记录_" + now.getFullYear() + pad2(now.getMonth()+1) + pad2(now.getDate()) + ".txt";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(url); document.body.removeChild(a); }, 200);
+}
+
+/* ---- 组合根：初始化（浏览器环境） ---- */
+if (HAS_DOM){
+  App.init();
+  document.getElementById("topdate").textContent = App.todayStr + (App.state.outOfRange ? "（历法超范围）" : "");
+  renderQiu();
+  route();
+  PERF.bootMs = performance.now() - BOOT_T0;
+  window.addEventListener("hashchange", route);
+  /* 首次用户手势恢复 AudioContext（iOS/Android autoplay 策略） */
+  document.addEventListener("pointerdown", function _acResume(){
+    AudioMgr.resumeIfSuspended();
+    document.removeEventListener("pointerdown", _acResume);
+  }, {once:true});
+  document.getElementById("q-input").addEventListener("input", onInput);
+  document.getElementById("btn-draw").addEventListener("click", onDraw);
+  /* 音效静音按钮 */
+  (function(){
+    var mb = document.getElementById("btn-mute");
+    if (!mb) return;
+    mb.textContent = AudioMgr.muted ? "🔕" : "🔔";
+    mb.style.opacity = AudioMgr.muted ? ".4" : ".55";
+    mb.addEventListener("click", function(ev){
+      ev.stopPropagation();
+      var m = AudioMgr.toggleMute();
+      mb.textContent = m ? "🔕" : "🔔";
+      mb.style.opacity = m ? ".4" : ".55";
+    });
+  })();
+  document.getElementById("app").addEventListener("click", function(ev){
+    var el = ev.target;
+    while (el && el !== this){
+      if (el.id === "btn-draw") return;
+      if (el.getAttribute && el.getAttribute("data-resolve")){ onResolve(el.getAttribute("data-resolve")); return; }
+      if (el.id === "cal-prev"){ onCalNav(-1); return; }
+      if (el.id === "cal-next"){ onCalNav(1); return; }
+      if (el.id === "hl-prev"){ onHlNav(-1); return; }
+      if (el.id === "hl-next"){ onHlNav(1); return; }
+      if (el.id === "hl-today"){ App.state.huangliDate = App.todayStr; renderHuangli(); return; }
+      if (el.getAttribute && el.getAttribute("data-day")){ onDayClick(el.getAttribute("data-day")); return; }
+      if (el.getAttribute && el.getAttribute("data-rec")){ onRecClick(el.getAttribute("data-rec")); return; }
+      if (el.id === "drawer-close"){ closeDrawer(); return; }
+      if (el.id === "btn-export"){ exportRecords(); return; }
+      el = el.parentNode;
+    }
+  });
+}
+
+/* ---- 开发接口导出（Node 抽取对拍用；浏览器无害） ---- */
+if (typeof globalThis !== "undefined"){
+  globalThis.__QG__ = {
+    runConformance: runConformance,
+    conformanceCases: conformanceCases,
+    CONFIG: CONFIG,
+    engine: { CAL: CAL, MEI: MEI, HL: HL },
+    content: { SIGN_LIB: SIGN_LIB, signOf: signOf, SLOT_TIYONG: SLOT_TIYONG, SLOT_WS: SLOT_WS, SLOT_MOVE: SLOT_MOVE, SLOT_BIAN: SLOT_BIAN },
+    composeDraw: composeDraw, dailyGua: dailyGua, askQigua: askQigua, gradeDraw: gradeDraw,
+    Store: Store, App: App
+  };
+}
+})();
+</script>
+</body>
+</html>
