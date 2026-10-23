@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>起个卦 · 视觉 Mockup v2</title>
+<style>
+/* ═══════════════════════════════════════════
+   金青新中式 · 色彩令牌（从参考图精确提取）
+   ═══════════════════════════════════════════ */
+:root{
+  /* ---- 基础底色 ---- */
+  --bg-paper:     #f8f4ec;   /* 宣纸米白，主底色 */
+  --bg-card:      #fffdf6;   /* 卡片底 */
+  --ink:          #2c2c2a;   /* 墨色正文 */
+  --ink-light:    #666666;   /* 次要文字 */
+  --line:         #e2d9c6;   /* 分隔线 */
+
+  /* ---- 国风扩展色板 ---- */
+  --bg-warm:      #e8c89a;   /* 暖杏色块 */
+  --bg-indigo:    #2d4a6b;   /* 靛蓝区块 */
+  --bg-rose:      #d4a0a0;   /* 藕粉点缀 */
+  --bg-pine:      #4a7c59;   /* 松绿自然 */
+  --bg-dark:      #1a2a4a;   /* 深靛重色 */
+
+  /* ---- 金系 ---- */
+  --gold:         #c9a961;   /* 宫金·线条/文字强调 */
+  --gold-light:   #e8d4a0;   /* 浅金·洒金颗粒 */
+  --gold-pale:    #f5edd8;   /* 极浅金·背景微染 */
+
+  /* ---- 红系 ---- */
+  --vermilion:    #b4232a;   /* 朱砂·最高强调 */
+  --coral:        #c44a2a;   /* 橙红·喙/细节 */
+
+  /* ---- 云线色 ---- */
+  --cloud-line:   #c9a961;   /* 祥云线条 = 金色 */
+
+  /* ---- 签级七档色 ---- */
+  --t-top:        #c9a961;   /* 上上 - 宫金 */
+  --t-high:       #d4a574;   /* 上   - 驼金 */
+  --t-mid-high:   #5a8a76;   /* 中上 - 松青 */
+  --t-mid:        #b98a3e;   /* 中   - 琥珀 */
+  --t-mid-low:    #3a5a7a;   /* 中下 - 靛灰 */
+  --t-low:        #555a62;   /* 下   - 铁灰 */
+  --t-bottom:     #3d3a45;   /* 下下 - 玄墨 */
+
+  /* ---- 渐变与纹理 ---- */
+  --grad-paper:   linear-gradient(180deg, #f8f4ec 0%, #f0e8d8 50%, #f5f0e8 100%);
+  --grad-gold-btn:linear-gradient(135deg, #d4a84b 0%, #c9a961 40%, #b89030 70%, #a07820 100%);
+  --grad-vermilion:linear-gradient(135deg, #d43a3a 0%, #b4232a 60%, #9a1a1f 100%);
+  --card-shadow:  0 2px 16px rgba(26,42,74,.06), 0 1px 4px rgba(26,42,74,.04);
+  --card-border:  linear-gradient(135deg, rgba(201,169,97,.3) 0%, rgba(201,169,97,.15) 100%);
+}
+
+/* ═══════════════════════════════════════════
+   Reset & Base
+   ═══════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-size:16px}
+body{
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  background:#e8e0d4;
+  display:flex;justify-content:center;align-items:flex-start;
+  padding:20px 0 40px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ═══════════════════════════════════════════
+   手机容器（375×812 基准）
+   ═══════════════════════════════════════════ */
+.phone-frame{
+  width:375px;height:812px;background:var(--grad-paper);
+  border-radius:44px;
+  box-shadow:
+    0 0 0 11px #1a1a1a,
+    0 0 0 13px #333,
+    0 24px 60px rgba(0,0,0,.25),
+    inset 0 0 0 1px rgba(255,255,255,.1);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+/* 刘海 */
+.phone-frame::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:150px;height:28px;background:#1a1a1a;border-radius:0 0 18px 18px;z-index:100;
+}
+
+/* ═══════════════════════════════════════════
+   Topbar
+   ═══════════════════════════════════════════ */
+.topbar{
+  display:flex;align-items:baseline;justify-content:space-between;
+  padding:42px 20px 12px;position:relative;z-index:10;
+}
+.topbar h1{
+  font-size:23px;letter-spacing:6px;color:var(--gold);font-weight:700;
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",STSong,serif;
+  position:relative;
+}
+.topbar h1::after{
+  content:'◆';display:inline-block;font-size:8px;color:var(--vermilion);
+  margin-left:7px;vertical-align:super;
+}
+.topdate{font-size:12px;color:var(--ink-light);letter-spacing:.5px}
+.btn-mute{
+  background:none;border:none;font-size:17px;cursor:pointer;
+  padding:4px 8px;line-height:1;opacity:.45;transition:opacity .2s;
+  color:var(--ink);
+}
+.btn-mute:hover{opacity:.7}
+
+/* ═══════════════════════════════════════════
+   页面视图
+   ═══════════════════════════════════════════ */
+.view{flex:1;overflow-y:auto;padding:0 18px 100px;-webkit-overflow-scrolling:touch}
+.view.hidden{display:none !important}
+
+/* ═══════════════════════════════════════════
+   ★★★ 求签页 · 主视觉区 ★★★
+   ═══════════════════════════════════════════ */
+
+/* ---- 仙鹤主视觉容器 ---- */
+.crane-hero{
+  position:relative;width:100%;height:220px;display:flex;
+  align-items:center;justify-content:center;margin-top:-4px;
+  overflow:visible;
+}
+.crane-hero svg{
+  width:280px;height:auto;filter:drop-shadow(0 2px 8px rgba(26,42,74,.08));
+}
+
+/* ---- 祥云分隔线 ---- */
+.cloud-divider{
+  display:flex;align-items:center;justify-content:center;
+  padding:4px 0 8px;position:relative;
+}
+.cloud-divider svg{width:200px;height:28px;opacity:.7}
+
+/* ---- 洒金颗粒装饰 ---- */
+.gold-dust{
+  position:absolute;pointer-events:none;
+  width:3px;height:3px;border-radius:50%;
+  background:var(--gold-light);opacity:.5;
+}
+.gd-1{top:60px;left:15%;width:4px;height:4px;opacity:.35}
+.gd-2{top:95px;left:75%;width:3px;height:3px;opacity:.5}
+.gd-3{top:130px;left:25%;width:2px;height:2px;opacity:.4}
+.gd-4{top:80px;left:82%;width:3px;height:3px;opacity:.3}
+.gd-5{top:150px;left:60%;width:4px;height:4px;opacity:.25}
+.gd-6{top:45px;left:55%;width:2px;height:2px;opacity:.45}
+.gd-7{top:110px;left:8%;width:3px;height:3px;opacity:.35}
+.gd-8{top:170px;left:88%;width:2px;height:2px;opacity:.4}
+
+/* ---- 远山背景层 ---- */
+.mountain-bg{
+  position:absolute;top:0;left:0;right:0;height:200px;
+  overflow:hidden;pointer-events:none;z-index:0;
+}
+.mountain-bg svg{width:100%;height:100%}
+
+/* ---- 签筒区域 ---- */
+.sign-area{
+  display:flex;flex-direction:column;align-items:center;
+  padding:8px 0 16px;position:relative;z-index:2;
+}
+.sign-cylinder{
+  width:90px;height:130px;position:relative;
+}
+.sign-cylinder svg{width:100%;height:100%}
+.sign-hint{
+  margin-top:10px;font-size:12px;color:var(--ink-light);
+  letter-spacing:2px;font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+  opacity:.7;
+}
+
+/* ---- 输入区 ---- */
+.input-section{
+  padding:4px 0 12px;
+}
+.input-label{
+  display:block;font-size:13px;color:var(--ink-light);
+  margin-bottom:6px;letter-spacing:.5px;
+}
+.text-input{
+  width:100%;min-height:64px;padding:12px 14px;
+  border:1.5px solid var(--line);border-radius:12px;
+  background:var(--bg-card);font-size:15px;font-family:inherit;
+  resize:none;transition:border-color .2s,box-shadow .2s;
+  line-height:1.6;color:var(--ink);
+}
+.text-input::placeholder{color:#bbb}
+.text-input:focus{
+  outline:none;border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(201,169,97,.12);
+}
+.char-count{
+  font-size:11.5px;color:var(--ink-light);text-align:right;
+  margin-top:4px;letter-spacing:.3px;
+
+}
+
+/* ---- 摇签按钮 ---- */
+.btn-draw{
+  display:block;width:100%;min-height:54px;border:none;border-radius:14px;
+  background:var(--grad-gold-btn);color:#fff;font-size:18px;
+  letter-spacing:10px;font-weight:600;cursor:pointer;
+  box-shadow:
+    0 4px 14px rgba(201,169,97,.35),
+    inset 0 1px 0 rgba(255,255,255,.2),
+    inset 0 -2px 0 rgba(0,0,0,.08);
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+  transition:transform .1s,box-shadow .15s;
+  position:relative;overflow:hidden;
+  margin-top:12px;
+}
+.btn-draw::before{
+  content:'';position:absolute;top:0;left:-100%;
+  width:200%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
+  transition:left .6s ease;
+}
+.btn-draw:hover::before{left:100%}
+.btn-draw:active{
+  transform:scale(.977);
+  box-shadow:0 2px 8px rgba(201,169,97,.3),inset 0 1px 0 rgba(255,255,255,.15);
+}
+
+/* ---- 结果卡 ---- */
+.result-card{
+  background:var(--bg-card);border-radius:16px;padding:20px;
+  margin:18px 0 8px;
+  border:1px solid transparent;
+  background-image:linear-gradient(var(--bg-card),var(--bg-card)),var(--card-border);
+  background-origin:padding-box,border-box;
+  background-clip:padding-box,border-box;
+  box-shadow:var(--card-shadow);
+  position:relative;overflow:hidden;
+}
+/* 结果卡左上角装饰角 */
+.result-card::before{
+  content:'';position:absolute;top:0;left:0;
+  width:40px;height:40px;
+  border-top:2px solid var(--gold);border-left:2px solid var(--gold);
+  border-radius:16px 0 0 0;opacity:.5;
+}
+.result-card::after{
+  content:'';position:absolute;bottom:0;right:0;
+  width:40px;height:40px;
+  border-bottom:2px solid var(--gold);border-right:2px solid var(--gold);
+  border-radius:0 0 16px 0;opacity:.5;
+}
+
+.tier-badge{
+  display:inline-block;padding:5px 16px;border-radius:20px;
+  color:#fffdf6;font-size:14px;letter-spacing:3px;
+  font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.15);
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+  margin-bottom:12px;
+}
+.tier-badge.t-top{background:linear-gradient(135deg,#d4aa4a,#b89030)}
+.tier-badge.t-high{background:linear-gradient(135deg,#ddb87a,#c49a5c)}
+.tier-badge.t-mid-high{background:linear-gradient(135deg,#6a9e88,#4a7c59)}
+.tier-badge.t-mid{background:linear-gradient(135deg,#c99a4e,#a67c30)}
+.tier-badge.t-mid-low{background:linear-gradient(135deg,#4a6a8a,#3a5a7a)}
+.tier-badge.t-low{background:linear-gradient(135deg,#656a72,#555a62)}
+.tier-badge.t-bottom{background:linear-gradient(135deg,#4d4a55,#3d3a45)}
+
+.poem-text{
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",STSong,serif;
+  white-space:pre-line;line-height:2.2;font-size:15.5px;
+  color:var(--ink);letter-spacing:.6px;text-align:justify;
+  margin:12px 0;padding:12px 14px;
+  background:linear-gradient(135deg,#faf8f2,#f5f0e8);
+  border-left:3px solid var(--gold);border-radius:0 8px 8px 0;
+}
+
+.resolve-list{margin:14px 0 4px}
+.resolve-item{
+  display:flex;align-items:flex-start;gap:10px;padding:10px 0;
+  border-bottom:1px dashed var(--line);
+}
+.resolve-item:last-child{border-bottom:none}
+.resolve-num{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--gold);color:#fff;font-size:12px;
+  display:flex;align-items:center;justify-content:center;
+  flex:none;font-weight:700;font-family:Georgia,serif;
+}
+.resolve-text{font-size:13.5px;line-height:1.75;flex:1;color:var(--ink)}
+
+.resolve-footer{
+  text-align:center;margin-top:14px;padding-top:12px;
+  border-top:1px solid var(--line);
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+  font-size:13px;color:var(--ink-light);font-style:italic;
+  letter-spacing:1.5px;
+}
+
+/* 结果卡仙鹤小装饰 */
+.result-crane-deco{
+  position:absolute;right:12px;top:12px;
+  opacity:.08;pointer-events:none;width:56px;
+}
+
+/* ═══════════════════════════════════════════
+   ★ 黄历页 ★
+   ═══════════════════════════════════════════ */
+.hl-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin:8px 0 14px;
+}
+.hl-date{
+  font-size:17px;color:var(--gold);letter-spacing:2px;
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+  font-weight:600;
+}
+.hl-nav-btn{
+  min-width:42px;min-height:42px;border:1.5px solid var(--line);
+  border-radius:12px;background:var(--bg-card);
+  font-size:17px;color:var(--ink);cursor:pointer;
+  transition:all .2s;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.hl-nav-btn:active{background:var(--line);transform:scale(.95)}
+
+/* 干支信息网格（图2风格多色块） */
+.ganzhi-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;
+}
+.gz-cell{
+  border-radius:10px;padding:12px 10px;text-align:center;
+  border:1px solid transparent;
+  box-shadow:0 1px 4px rgba(0,0,0,.04);
+}
+.gz-cell.gz-year{background:linear-gradient(135deg,#2d4a6b,#3d5a7c);color:#e8d4a0}
+.gz-cell.gz-month{background:linear-gradient(135deg,#e8c89a,#d4a574);color:#4a3720}
+.gz-cell.gz-day{background:linear-gradient(135deg,#d4a0a0,#c4908a);color:#fff}
+.gz-cell.gz-hour{background:linear-gradient(135deg,#4a7c59,#3d6b5a);color:#e8f0e8}
+.gz-label{font-size:11px;opacity:.7;display:block;margin-bottom:4px;letter-spacing:1px}
+.gz-val{font-size:18px;font-weight:700;
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+  letter-spacing:3px;
+}
+
+/* 宜忌标签 */
+.yi-ji-section{margin:16px 0}
+.yi-ji-row{display:flex;gap:12px;margin-bottom:10px}
+.yi-ji-label{
+  width:28px;flex:none;font-size:14px;font-weight:700;
+  text-align:center;padding-top:4px;
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+}
+.yi-ji-label.is-yi{color:var(--bg-pine)}
+.yi-ji-label.is-ji{color:var(--bg-rose)}
+.tag-group{flex:1;display:flex;flex-wrap:wrap;gap:6px}
+.tag{
+  display:inline-block;padding:4px 12px;border-radius:16px;
+  font-size:12.5px;letter-spacing:.5px;
+}
+.tag.tag-yi{
+  background:linear-gradient(135deg,rgba(74,124,89,.1),rgba(74,124,89,.05));
+  color:#3d6b5a;border:1px solid rgba(74,124,89,.2);
+}
+.tag.tag-ji{
+  background:linear-gradient(135deg,rgba(212,160,160,.15),rgba(212,160,160,.08));
+  color:#8a5050;border:1px solid rgba(212,160,160,.25);
+}
+
+/* 五行穿衣 */
+.wuxing-section{margin:16px 0}
+.wuxing-title{
+  font-size:15px;color:var(--gold);margin-bottom:10px;
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+  letter-spacing:2px;font-weight:600;
+}
+.wuxing-colors{display:flex;justify-content:center;gap:16px}
+.wx-dot{
+  width:36px;height:36px;border-radius:50%;
+  border:2.5px solid rgba(255,255,255,.7);
+  box-shadow:0 2px 6px rgba(0,0,0,.1),inset 0 1px 3px rgba(0,0,0,.08);
+  position:relative;
+}
+.wx-dot.wx-best::after{
+  content:'大吉';position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);
+  font-size:9px;color:var(--ink-light);white-space:nowrap;letter-spacing:1px;
+}
+.wx-label{
+  text-align:center;font-size:10px;color:var(--ink-light);
+  margin-top:20px;letter-spacing:.5px;
+}
+
+/* ═══════════════════════════════════════════
+   ★ 月历页 ★
+   ═══════════════════════════════════════════ */
+.cal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin:8px 0 14px;
+}
+.cal-month{
+  font-size:18px;color:var(--gold);letter-spacing:3px;
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+  font-weight:600;
+}
+.cal-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  background:var(--bg-card);border-radius:14px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  box-shadow:var(--card-shadow);
+}
+.cal-weekday{
+  padding:10px 0;text-align:center;font-size:11.5px;
+  color:var(--ink-light);font-weight:500;letter-spacing:2px;
+  background:linear-gradient(180deg,#f5eed8,#f0e8d0);
+  border-bottom:1px solid var(--line);
+}
+.cal-day{
+  min-height:48px;text-align:center;padding-top:8px;
+  font-size:14.5px;color:var(--ink);
+  border-right:1px solid #f2ede0;border-bottom:1px solid #f2ede0;
+  transition:background .15s;cursor:pointer;position:relative;
+}
+.cal-day:nth-child(7n){border-right:none}
+.cal-day.off{color:#c5beae}
+.cal-day.today{
+  background:linear-gradient(135deg,var(--bg-warm),#ddbf8a);
+  font-weight:700;color:var(--gold);
+}
+.cal-day .dot{
+  display:block;width:8px;height:8px;border-radius:50%;
+  margin:3px auto 0;
+  box-shadow:0 1px 2px rgba(0,0,0,.1);
+}
+.cal-day .dot.has-record{
+  background:var(--gold);
+}
+.cal-legend{
+  margin:14px 2px;font-size:11.5px;color:var(--ink-light);
+  line-height:2.2;display:flex;align-items:center;gap:16px;justify-content:center;
+}
+.cal-legend span{display:flex;align-items:center;gap:4px}
+.cal-legend .ldot{
+  display:inline-block;width:8px;height:8px;border-radius:50%;
+  background:var(--gold);box-shadow:0 1px 2px rgba(0,0,0,.08);
+}
+
+/* ═══════════════════════════════════════════
+   Tab Bar
+   ═══════════════════════════════════════════ */
+.tabbar{
+  position:absolute;left:0;right:0;bottom:0;z-index:20;
+  display:flex;justify-content:space-around;
+  background:linear-gradient(180deg,#f5f0ec 0%,#ede6d6 100%);
+  border-top:1px solid var(--line);
+  padding:8px 0 22px;
+  box-shadow:0 -1px 8px rgba(0,0,0,.04);
+  border-radius:0 0 32px 32px;
+}
+.tabbar a{
+  flex:1;max-width:140px;min-height:52px;display:flex;
+  align-items:center;justify-content:center;text-decoration:none;
+  color:var(--ink-light);font-size:15px;letter-spacing:5px;
+  font-weight:400;transition:all .25s;position:relative;
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+}
+.tabbar a.on{
+  color:var(--vermilion);font-weight:700;
+}
+.tabbar a.on::before{
+  content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+  width:20px;height:3px;background:var(--vermilion);border-radius:2px;
+}
+.tabbar a.on::after{
+  content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);
+  width:5px;height:5px;background:var(--vermilion);border-radius:50%;
+}
+
+/* ═══════════════════════════════════════════
+   Footer
+   ═══════════════════════════════════════════ */
+.footer{
+  margin:20px 8px 4px;font-size:10px;color:#b0a898;
+  line-height:1.8;text-align:center;letter-spacing:.3px;
+  padding:0 12px;opacity:.7;
+}
+
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+
+  <!-- ════════════════════ Topbar ═══════════════════ -->
+  <header class="topbar">
+    <h1>起个卦</h1>
+    <div class="topdate">乙巳年 腊月十七</div>
+    <button class="btn-mute" aria-label="静音">🔔</button>
+  </header>
+
+  <!-- ════════════════════ 求签页 ═══════════════════ -->
+  <section id="view-qiu" class="view">
+
+    <!-- 远山背景 -->
+    <div class="mountain-bg">
+      <svg viewBox="0 0 375 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax slice">
+        <defs>
+          <linearGradient id="mtFar" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#a8c4b8" stop-opacity=".25"/>
+            <stop offset="100%" stop-color="#a8c4b8" stop-opacity=".05"/>
+          </linearGradient>
+          <linearGradient id="mtMid" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#7ba399" stop-opacity=".2"/>
+            <stop offset="100%" stop-color="#7ba399" stop-opacity=".03"/>
+          </linearGradient>
+          <linearGradient id="mtNear" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#5a8578" stop-opacity=".15"/>
+            <stop offset="100%" stop-color="#5a8578" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- 远山第一层（最远最淡） -->
+        <path d="M0 160 Q40 120 90 140 Q140 100 200 130 Q260 90 320 125 Q360 105 375 120 L375 200 L0 200Z" fill="url(#mtFar)"/>
+        <!-- 远山第二层 -->
+        <path d="M0 170 Q60 130 130 155 Q190 115 260 148 Q330 118 375 138 L375 200 L0 200Z" fill="url(#mtMid)"/>
+        <!-- 近山（最近最深） -->
+        <path d="M0 182 Q80 150 160 172 Q240 145 320 168 Q360 155 375 162 L375 200 L0 200Z" fill="url(#mtNear)"/>
+      </svg>
+    </div>
+
+    <!-- 洒金颗粒 -->
+    <div class="gold-dust gd-1"></div>
+    <div class="gold-dust gd-2"></div>
+    <div class="gold-dust gd-3"></div>
+    <div class="gold-dust gd-4"></div>
+    <div class="gold-dust gd-5"></div>
+    <div class="gold-dust gd-6"></div>
+    <div class="gold-dust gd-7"></div>
+    <div class="gold-dust gd-8"></div>
+
+    <!-- ★ 仙鹤主视觉（工笔画风格）★ -->
+    <div class="crane-hero">
+      <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="展翅仙鹤">
+        <defs>
+          <!-- 身体渐变：极微暖白 -->
+          <radialGradient id="crBody" cx="45%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="70%" stop-color="#fefefa"/>
+            <stop offset="100%" stop-color="#f8f4ec"/>
+          </radialGradient>
+          <!-- 黑颈渐变 -->
+          <linearGradient id="crNeck" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1a1a1a"/>
+            <stop offset="100%" stop-color="#2c2c2a"/>
+          </linearGradient>
+          <!-- 翅膀羽毛层次渐变 -->
+          <linearGradient id="crWingL" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#3a3a3a"/>
+            <stop offset="35%" stop-color="#6a6a6a"/>
+            <stop offset="60%" stop-color="#ababab"/>
+            <stop offset="85%" stop-color="#e8e8e8"/>
+            <stop offset="100%" stop-color="#fefefa"/>
+          </linearGradient>
+          <linearGradient id="crWingR" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#3a3a3a"/>
+            <stop offset="35%" stop-color="#6a6a6a"/>
+            <stop offset="60%" stop-color="#ababab"/>
+            <stop offset="85%" stop-color="#e8e8e8"/>
+            <stop offset="100%" stop-color="#fefefa"/>
+          </linearGradient>
+          <!-- 尾羽渐变 -->
+          <linearGradient id="crTail" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#1a2a4a"/>
+            <stop offset="60%" stop-color="#2a3a5a" stop-opacity=".6"/>
+            <stop offset="100%" stop-color="#3a4a6a" stop-opacity=".1"/>
+          </linearGradient>
+          <!-- 飞羽尖端金色 -->
+          <linearGradient id="crWingTip" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#c9a961"/>
+            <stop offset="100%" stop-color="#e8d4a0"/>
+          </linearGradient>
+          <!-- 丹冠红 -->
+          <radialGradient id="crCrown" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#e63946"/>
+            <stop offset="100%" stop-color="#b4232a"/>
+          </radialGradient>
+        </defs>
+
+        <!-- ══ 左翅膀（展开，工笔羽毛层次）══ -->
+        <g id="wing-left">
+          <!-- 主翼面 - 多层羽毛表现 -->
+          <path d="
+            M145 108
+            C130 95, 110 82, 85 74
+            C65 68, 42 65, 22 70
+            C30 76, 42 80, 55 84
+            C72 89, 92 94, 112 100
+            C128 105, 140 108, 145 108Z"
+            fill="url(#crWingL)" stroke="#555" stroke-width="0.6"/>
+
+          <!-- 第一级飞羽（最长，外缘）-->
+          <path d="M22 70 C18 72, 12 76, 6 82 C10 83, 16 82, 22 80 Z" fill="#2a2a2a" opacity=".7"/>
+          <path d="M30 73 C26 75, 20 79, 14 85 C18 86, 24 85, 30 83 Z" fill="#3a3a3a" opacity=".5"/>
+          <path d="M38 74 C34 76, 28 80, 22 87 C26 88, 32 86, 38 84 Z" fill="#4a4a4a" opacity=".4"/>
+
+          <!-- 第二级飞羽 -->
+          <path d="M48 76 C42 79, 34 84, 26 92 C32 92, 40 89, 48 86 Z" fill="#5a5a5a" opacity=".35"/>
+          <path d="M58 78 C52 81, 44 86, 36 94 C42 94, 50 91, 58 88 Z" fill="#7a7a7a" opacity=".3"/>
+
+          <!-- 第三级飞羽（覆羽，较白）-->
+          <path d="M70 82 C64 85, 56 90, 48 98 C54 97, 62 93, 70 90 Z" fill="#aaaaaa" opacity=".25"/>
+          <path d="M85 86 C78 89, 69 94, 60 102 C67 100, 75 96, 85 92 Z" fill="#cccccc" opacity=".2"/>
+
+          <!-- 翅膀内侧纹理线（工笔画感）-->
+          <path d="M130 98 Q100 85 70 80" fill="none" stroke="#888" stroke-width="0.4" opacity=".4"/>
+          <path d="M132 102 Q105 90 78 86" fill="none" stroke="#999" stroke-width="0.35" opacity=".3"/>
+          <path d="M134 106 Q110 95 86 92" fill="none" stroke="#aaa" stroke-width="0.3" opacity=".25"/>
+
+          <!-- 飞羽尖端金色点缀 -->
+          <path d="M6 82 L4 86 L10 84 Z" fill="url(#crWingTip)" opacity=".6"/>
+          <path d="M14 85 L12 89 L18 87 Z" fill="url(#crWingTip)" opacity=".5"/>
+          <path d="M22 87 L20 91 L26 89 Z" fill="url(#crWingTip)" opacity=".4"/>
+        </g>
+
+        <!-- ══ 右翅膀（镜像对称）══ -->
+        <g id="wing-right">
+          <path d="
+            M175 108
+            C190 95, 210 82, 235 74
+            C255 68, 278 65, 298 70
+            C290 76, 278 80, 265 84
+            C248 89, 228 94, 208 100
+            C192 105, 180 108, 175 108Z"
+            fill="url(#crWingR)" stroke="#555" stroke-width="0.6"/>
+
+          <!-- 第一级飞羽 -->
+          <path d="M298 70 C302 72, 308 76, 314 82 C310 83, 304 82, 298 80 Z" fill="#2a2a2a" opacity=".7"/>
+          <path d="M290 73 C294 75, 300 79, 306 85 C302 86, 296 85, 290 83 Z" fill="#3a3a3a" opacity=".5"/>
+          <path d="M282 74 C286 76, 292 80, 298 87 C294 88, 288 86, 282 84 Z" fill="#4a4a4a" opacity=".4"/>
+
+          <!-- 第二级飞羽 -->
+          <path d="M272 76 C278 79, 286 84, 294 92 C288 92, 280 89, 272 86 Z" fill="#5a5a5a" opacity=".35"/>
+          <path d="M262 78 C268 81, 276 86, 284 94 C278 94, 270 91, 262 88 Z" fill="#7a7a7a" opacity=".3"/>
+
+          <!-- 第三级飞羽 -->
+          <path d="M250 82 C256 85, 264 90, 272 98 C266 97, 258 93, 250 90 Z" fill="#aaaaaa" opacity=".25"/>
+          <path d="M235 86 C242 89, 251 94, 260 102 C253 100, 245 96, 235 92 Z" fill="#cccccc" opacity=".2"/>
+
+          <!-- 翅膀纹理线 -->
+          <path d="M190 98 Q220 85 250 80" fill="none" stroke="#888" stroke-width="0.4" opacity=".4"/>
+          <path d="M188 102 Q215 90 242 86" fill="none" stroke="#999" stroke-width="0.35" opacity=".3"/>
+          <path d="M186 106 Q210 95 234 92" fill="none" stroke="#aaa" stroke-width="0.3" opacity=".25"/>
+
+          <!-- 飞羽尖端金色 -->
+          <path d="M314 82 L316 86 L310 84 Z" fill="url(#crWingTip)" opacity=".6"/>
+          <path d="M306 85 L308 89 L302 87 Z" fill="url(#crWingTip)" opacity=".5"/>
+          <path d="M298 87 L300 91 L294 89 Z" fill="url(#crWingTip)" opacity=".4"/>
+        </g>
+
+        <!-- ══ 身体（椭圆 + 胸部隆起）══ -->
+        <ellipse cx="160" cy="126" rx="38" ry="26" fill="url(#crBody)" stroke="#ddd" stroke-width="0.5"/>
+        <!-- 胸部高光 -->
+        <ellipse cx="152" cy="120" rx="18" ry="12" fill="#fff" opacity=".4"/>
+        <!-- 身体下方尾根过渡 -->
+        <path d="M130 142 Q160 156 190 142 Q195 148 188 154 Q160 166 132 154 Q125 148 130 142Z" fill="#f0ece2" stroke="#ccc" stroke-width="0.4"/>
+
+        <!-- ══ 脖子与头（S形曲线）══ -->
+        <path d="
+          M138 116
+          C128 108, 118 94, 114 80
+          C111 68, 114 54, 122 46
+          C130 40, 142 40, 148 48
+          C153 56, 150 70, 144 82
+          C140 92, 142 104, 148 114"
+          fill="url(#crNeck)" stroke="#222" stroke-width="0.8"/>
+
+        <!-- 头部（白色面部区域）-->
+        <ellipse cx="134" cy="44" rx="14" ry="11" fill="#fefefa" stroke="#ccc" stroke-width="0.5"/>
+        <!-- 眼睛 -->
+        <circle cx="130" cy="41" r="2.5" fill="#1a1a1a"/>
+        <circle cx="129.5" cy="40.5" r="0.8" fill="#fff" opacity=".6"/> <!-- 眼神光 -->
+
+        <!-- 喙（橙红色，上下两片）-->
+        <path d="M122 44 Q114 46 108 44 Q114 43 122 44.5Z" fill="#c44a2a" stroke="#a33a1a" stroke-width="0.4"/>
+        <path d="M122 44.5 Q116 48 110 47 Q116 46 122 46Z" fill="#d45a3a" stroke="#b34a2a" stroke-width="0.3"/>
+
+        <!-- 丹冠（朱砂红，头顶小块）-->
+        <path d="M136 34 Q140 28 146 30 Q143 36 139 38 Z" fill="url(#crCrown)" stroke="#9a1a1f" stroke-width="0.4"/>
+        <ellipse cx="141" cy="32" rx="3" ry="2.5" fill="#e63946" opacity=".6"/>
+
+        <!-- 冠羽延伸（细长红羽）-->
+        <path d="M144 31 Q150 24 156 26 Q151 32 146 35" fill="none" stroke="#b4232a" stroke-width="0.8" opacity=".5"/>
+        <path d="M146 33 Q152 27 158 29 Q153 34 148 36" fill="none" stroke="#c44a3a" stroke-width="0.5" opacity=".3"/>
+
+        <!-- ══ 尾羽（黑色长羽扇形散开）══ -->
+        <g id="tail-feathers">
+          <path d="M132 150 Q120 165 100 178 Q115 170 130 156Z" fill="url(#crTail)" stroke="#2a3a5a" stroke-width="0.4" opacity=".6"/>
+          <path d="M140 154 Q132 172 118 188 Q130 176 140 160Z" fill="url(#crTail)" stroke="#2a3a5a" stroke-width="0.4" opacity=".5"/>
+          <path d="M150 154 Q150 174 145 192 Q152 178 152 160Z" fill="url(#crTail)" stroke="#2a3a5a" stroke-width="0.4" opacity=".45"/>
+          <path d="M162 154 Q172 172 185 186 Q174 174 164 159Z" fill="url(#crTail)" stroke="#2a3a5a" stroke-width="0.4" opacity=".5"/>
+          <path d="M172 150 Q188 163 208 174 Q192 167 176 155Z" fill="url(#crTail)" stroke="#2a3a5a" stroke-width="0.4" opacity=".6"/>
+
+          <!-- 尾羽金色尖端 -->
+          <path d="M100 178 L96 183 L104 180Z" fill="#c9a961" opacity=".5"/>
+          <path d="M118 188 L115 193 L122 189Z" fill="#c9a961" opacity=".4"/>
+          <path d="M185 186 L190 191 L187 184Z" fill="#c9a961" opacity=".4"/>
+          <path d="M208 174 L214 178 L209 171Z" fill="#c9a961" opacity=".5"/>
+        </g>
+
+        <!-- ══ 腿与爪 ══ -->
+        <line x1="148" y1="150" x2="144" y2="180" stroke="#555" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="168" y1="148" x2="174" y2="178" stroke="#555" stroke-width="1.8" stroke-linecap="round"/>
+        <!-- 左爪 -->
+        <path d="M140 180 L148 180 M144 180 L141 186 M144 180 L147 186 M144 180 L145 187" stroke="#444" stroke-width="1.2" stroke-linecap="round"/>
+        <!-- 右爪 -->
+        <path d="M170 178 L178 178 M174 178 L171 184 M174 178 L177 184 M174 178 L175 185" stroke="#444" stroke-width="1.2" stroke-linecap="round"/>
+
+      </svg>
+    </div><!-- /crane-hero -->
+
+    <!-- 祥云线条装饰（金色流云）-->
+    <div class="cloud-divider">
+      <svg viewBox="0 0 240 30" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="cloudGold" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#c9a961" stop-opacity="0"/>
+            <stop offset="20%" stop-color="#c9a961" stop-opacity=".6"/>
+            <stop offset="50%" stop-color="#e8d4a0" stop-opacity=".8"/>
+            <stop offset="80%" stop-color="#c9a961" stop-opacity=".6"/>
+            <stop offset="100%" stop-color="#c9a961" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- 主云纹（粗线）-->
+        <path d="M0 18
+          Q10 10, 25 14
+          Q35 8, 50 12
+          Q65 4, 85 10
+          Q100 3, 120 10
+          Q140 4, 160 11
+          Q175 6, 195 13
+          Q210 8, 225 15
+          Q235 12, 240 18"
+          fill="none" stroke="url(#cloudGold)" stroke-width="1.3" stroke-linecap="round"/>
+        <!-- 副云纹（细线，略偏移）-->
+        <path d="M5 23
+          Q18 17, 32 20
+          Q48 14, 68 19
+          Q85 13, 105 18
+          Q125 13, 145 19
+          Q162 14, 182 20
+          Q198 16, 218 22
+          Q230 19, 240 24"
+          fill="none" stroke="#c9a961" stroke-width="0.7" stroke-linecap="round" opacity=".4"/>
+        <!-- 点缀卷云 -->
+        <path d="M60 7 Q68 3, 76 7" fill="none" stroke="#e8d4a0" stroke-width="0.8" stroke-linecap="round" opacity=".5"/>
+        <path d="M160 6 Q170 2, 178 6" fill="none" stroke="#e8d4a0" stroke-width="0.8" stroke-linecap="round" opacity=".5"/>
+      </svg>
+    </div>
+
+    <!-- 签筒 -->
+    <div class="sign-area">
+      <div class="sign-cylinder">
+        <svg viewBox="0 0 100 145" xmlns="http://www.w3.org/2000/svg" aria-label="签筒">
+          <defs>
+            <!-- 筒身深靛蓝漆器渐变 -->
+            <linearGradient id="cylBody" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#152238"/>
+              <stop offset="20%" stop-color="#1a2a4a"/>
+              <stop offset="50%" stop-color="#223555"/>
+              <stop offset="80%" stop-color="#1a2a4a"/>
+              <stop offset="100%" stop-color="#152238"/>
+            </linearGradient>
+            <!-- 筒口内暗部 -->
+            <radialGradient id="cylInner" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#0d1520"/>
+              <stop offset="100%" stop-color="#1a2a4a"/>
+            </radialGradient>
+            <!-- 金箍渐变 -->
+            <linearGradient id="goldRing" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#a07820"/>
+              <stop offset="30%" stop-color="#e8d4a0"/>
+              <stop offset="50%" stop-color="#c9a961"/>
+              <stop offset="70%" stop-color="#e8d4a0"/>
+              <stop offset="100%" stop-color="#a07820"/>
+            </linearGradient>
+            <!-- 底座木纹渐变 -->
+            <linearGradient id="woodBase" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#3a2820"/>
+              <stop offset="30%" stop-color="#4a3528"/>
+              <stop offset="70%" stop-color="#3d2c22"/>
+              <stop offset="100%" stop-color="#2e1e16"/>
+            </linearGradient>
+            <!-- 签头渐变 -->
+            <linearGradient id="stickTop" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ede6d6"/>
+              <stop offset="50%" stop-color="#faf6ee"/>
+              <stop offset="100%" stop-color="#e8dcc8"/>
+            </linearGradient>
+          </defs>
+
+          <!-- 露出的签头（在筒口上方）-->
+          <rect x="46" y="14" width="8" height="26" rx="1.5" fill="url(#stickTop)" stroke="#d4c4a8" stroke-width="0.6"/>
+          <!-- 签头金色帽 -->
+          <rect x="45" y="14" width="10" height="6" rx="1.5" fill="url(#goldRing)" stroke="#a07820" stroke-width="0.4"/>
+          <!-- 签头文字暗示（竖线代表刻字）-->
+          <line x1="50" y1="23" x2="50" y2="37" stroke="#c9a961" stroke-width="0.6" opacity=".4"/>
+
+          <!-- 筒身主体（圆柱）-->
+          <path d="M24 38 L24 124 Q24 134 50 134 Q76 134 76 124 L76 38Z"
+            fill="url(#cylBody)" stroke="#0d1520" stroke-width="1"/>
+
+          <!-- 筒口椭圆 -->
+          <ellipse cx="50" cy="38" rx="27" ry="10" fill="#2a3a5a" stroke="url(#goldRing)" stroke-width="1.2"/>
+          <!-- 筒口内暗部 -->
+          <ellipse cx="50" cy="39" rx="21" ry="7" fill="url(#cylInner)" opacity=".8"/>
+
+          <!-- ===== 金色箍圈装饰 ===== -->
+          <!-- 上箍（近筒口）-->
+          <ellipse cx="50" cy="52" rx="25.5" ry="3" fill="none" stroke="url(#goldRing)" stroke-width="1.5"/>
+          <ellipse cx="50" cy="53.5" rx="25.5" ry="3" fill="none" stroke="#e8d4a0" stroke-width="0.4" opacity=".4"/>
+
+          <!-- 中上箍 -->
+          <ellipse cx="50" cy="74" rx="25" ry="2.8" fill="none" stroke="url(#goldRing)" stroke-width="1.3"/>
+          <ellipse cx="50" cy="75.3" rx="25" ry="2.8" fill="none" stroke="#e8d4a0" stroke-width="0.4" opacity=".3"/>
+
+          <!-- 中下箍 -->
+          <ellipse cx="50" cy="100" rx="24.5" ry="2.6" fill="none" stroke="url(#goldRing)" stroke-width="1.3"/>
+          <ellipse cx="50" cy="101.2" rx="24.5" ry="2.6" fill="none" stroke="#e8d4a0" stroke-width="0.4" opacity=".3"/>
+
+          <!-- 下箍（近底部）-->
+          <ellipse cx="50" cy="118" rx="24" ry="2.4" fill="none" stroke="url(#goldRing)" stroke-width="1.2"/>
+          <ellipse cx="50" cy="119.2" rx="24" ry="2.4" fill="none" stroke="#e8d4a0" stroke-width="0.4" opacity=".3"/>
+
+          <!-- 筒身回纹装饰带（两道箍之间）-->
+          <g opacity=".15" stroke="#e8d4a0" stroke-width="0.5" fill="none">
+            <path d="M34 62 h4 v4 h-4Z M34 66 h4 v4 h-4Z M40 62 h4 v4 h-4Z M40 66 h4 v4 h-4Z M46 62 h4 v4 h-4Z M46 66 h4 v4 h-4Z M52 62 h4 v4 h-4Z M52 66 h4 v4 h-4Z M58 62 h4 v4 h-4Z M58 66 h4 v4 h-4Z M64 62 h4 v4 h-4Z M64 66 h4 v4 h-4Z"/>
+            <path d="M34 84 h4 v4 h-4Z M34 88 h4 v4 h-4Z M40 84 h4 v4 h-4Z M40 88 h4 v4 h-4Z M46 84 h4 v4 h-4Z M46 88 h4 v4 h-4Z M52 84 h4 v4 h-4Z M52 88 h4 v4 h-4Z M58 84 h4 v4 h-4Z M58 88 h4 v4 h-4Z M64 84 h4 v4 h-4Z M64 88 h4 v4 h-4Z"/>
+          </g>
+
+          <!-- 底座（深色木质托）-->
+          <path d="M18 129 Q18 140 50 140 Q82 140 82 129" fill="url(#woodBase)" stroke="#1a1010" stroke-width="0.8"/>
+          <rect x="14" y="129" width="72" height="7" rx="2" fill="url(#woodBase)" stroke="#2a1a10" stroke-width="0.6"/>
+          <!-- 底座金边 -->
+          <rect x="14" y="129" width="72" height="2" rx="1" fill="url(#goldRing)" opacity=".5"/>
+
+          <!-- 高光（左侧反光）-->
+          <path d="M28 45 L28 120" stroke="rgba(255,255,255,.04)" stroke-width="6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="sign-hint">诚心摇签 · 静候天机</div>
+    </div>
+
+    <!-- 输入区 -->
+    <div class="input-section">
+      <label class="input-label">所问之事（五十字内 · 留空则求今日一签）</label>
+      <textarea class="text-input" placeholder="如：换工作顺利吗"></textarea>
+      <div class="char-count">已入 0 字</div>
+    </div>
+
+    <!-- 摇签按钮 -->
+    <button class="btn-draw">摇　签</button>
+
+    <!-- ═══ 结果卡示例（静态展示）════ -->
+    <div class="result-card">
+
+      <!-- 小仙鹤装饰 -->
+      <svg class="result-crane-deco" viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#c9a961" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity=".6">
+          <ellipse cx="30" cy="42" rx="12" ry="8" fill="#fefefa" stroke="#ccc" stroke-width="0.4"/>
+          <path d="M24 38 Q18 30 16 22 Q14 16 18 12 Q24 10 28 16 Q30 24 28 34" fill="#2a2a2a" stroke="#222" stroke-width="0.5"/>
+          <circle cx="19" cy="13" r="3" fill="#fefefa" stroke="#ccc" stroke-width="0.3"/>
+          <circle cx="18" cy="12" r="0.8" fill="#333"/>
+          <path d="M16 12 Q13 10 11 11" stroke="#c44a2a" stroke-width="0.5"/>
+          <path d="M21 10 Q23 6 26 7 Q24 11 22 13" fill="#b4232a" stroke="#9a1a1f" stroke-width="0.3"/>
+          <path d="M26 36 Q16 28 6 26 Q14 30 24 36" fill="#eee" stroke="#aaa" stroke-width="0.4"/>
+          <path d="M34 36 Q44 28 54 26 Q46 30 36 36" fill="#eee" stroke="#aaa" stroke-width="0.4"/>
+          <path d="M38 48 Q46 54 54 50 Q46 56 38 52" fill="#1a2a4a" opacity=".3" stroke="#2a3a5a" stroke-width="0.3"/>
+          <line x1="27" y1="49" x2="25" y2="64" stroke="#555" stroke-width="1"/>
+          <line x1="33" y1="49" x2="35" y2="64" stroke="#555" stroke-width="1"/>
+        </g>
+      </svg>
+
+      <div class="tier-badge t-mid-high">中　上</div>
+
+      <div class="poem-text">云开月明照楼台
+清风送暖入帘栊
+莫道前程多险阻
+守得云开见月明</div>
+
+      <div class="resolve-list">
+        <div class="resolve-item">
+          <span class="resolve-num">壹</span>
+          <span class="resolve-text">此卦主运势渐开，先抑后扬。当前虽有阻滞，但坚持则必有转机。</span>
+        </div>
+        <div class="resolve-item">
+          <span class="resolve-num">贰</span>
+          <span class="resolve-text">事业宜稳中求进，不宜冒进。感情方面宜主动沟通，化解误会。</span>
+        </div>
+        <div class="resolve-item">
+          <span class="resolve-num">叁</span>
+          <span class="resolve-text">财运平平，不宜大额投资。健康注意休息，避免过度操劳。</span>
+        </div>
+      </div>
+
+      <div class="resolve-footer">「静心以待，时机将至」</div>
+    </div>
+
+    <!-- 底部祥云 -->
+    <div class="cloud-divider" style="opacity:.4">
+      <svg viewBox="0 0 200 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 14 Q15 6, 30 10 Q45 4, 65 9 Q85 3, 105 9 Q125 4, 145 10 Q160 6, 180 12 Q192 9, 200 14"
+          fill="none" stroke="#c9a961" stroke-width="1" stroke-linecap="round" opacity=".5"/>
+      </svg>
+    </div>
+
+  </section><!-- /view-qiu -->
+
+  <!-- ════════════════════ 黄历页 ═══════════════════ -->
+  <section id="view-huangli" class="view hidden">
+
+    <div class="hl-header">
+      <button class="hl-nav-btn" aria-label="前一天">◀</button>
+      <div>
+        <div class="hl-date">乙巳年 腊月十七</div>
+        <div style="font-size:11.5px;color:var(--ink-light);text-align:center;letter-spacing:.5px;margin-top:2px">
+          公元 2026年2月4日 · 星期三
+        </div>
+      </div>
+      <button class="hl-nav-btn" aria-label="后一天">▶</button>
+    </div>
+
+    <!-- 干支信息（多色块网格）-->
+    <div class="ganzhi-grid">
+      <div class="gz-cell gz-year">
+        <span class="gz-label">年柱</span>
+        <span class="gz-val">乙巳</span>
+      </div>
+      <div class="gz-cell gz-month">
+        <span class="gz-label">月柱</span>
+        <span class="gz-val">丁丑</span>
+      </div>
+      <div class="gz-cell gz-day">
+        <span class="gz-label">日柱</span>
+        <span class="gz-val">庚午</span>
+      </div>
+      <div class="gz-cell gz-hour">
+        <span class="gz-label">时柱</span>
+        <span class="gz-val">壬午</span>
+      </div>
+    </div>
+
+    <!-- 宜忌 -->
+    <div class="yi-ji-section">
+      <div class="yi-ji-row">
+        <span class="yi-ji-label is-yi">宜</span>
+        <div class="tag-group">
+          <span class="tag tag-yi">祭祀</span>
+          <span class="tag tag-yi">祈福</span>
+          <span class="tag tag-yi">出行</span>
+          <span class="tag tag-yi">纳采</span>
+          <span class="tag tag-yi">嫁娶</span>
+          <span class="tag tag-yi">开市</span>
+          <span class="tag tag-yi">立券</span>
+        </div>
+      </div>
+      <div class="yi-ji-row">
+        <span class="yi-ji-label is-ji">忌</span>
+        <div class="tag-group">
+          <span class="tag tag-ji">动土</span>
+          <span class="tag tag-ji">破土</span>
+          <span class="tag tag-ji">安葬</span>
+          <span class="tag tag-ji">开仓</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 五行穿衣 -->
+    <div class="wuxing-section">
+      <div class="wuxing-title">五行穿衣指南</div>
+      <div class="wuxing-colors">
+        <div>
+          <div class="wx-dot wx-best" style="background:linear-gradient(135deg,#c9a961,#e8d4a0)"></div>
+          <div class="wx-label">大吉·黄</div>
+        </div>
+        <div>
+          <div class="wx-dot" style="background:linear-gradient(135deg,#d4a574,#e8c89a)"></div>
+          <div class="wx-label">次吉·棕</div>
+        </div>
+        <div>
+          <div class="wx-dot" style="background:linear-gradient(135deg,#4a7c59,#6a9c79)"></div>
+          <div class="wx-label">平·绿</div>
+        </div>
+        <div>
+          <div class="wx-dot" style="background:linear-gradient(135deg,#2d4a6b,#4d6a8b)"></div>
+          <div class="wx-label">忌·蓝</div>
+        </div>
+        <div>
+          <div class="wx-dot" style="background:linear-gradient(135deg,#d4a0a0,#e4b0b0)"></div>
+          <div class="wx-label">忌·粉</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 节气提示 -->
+    <div style="margin:16px 0;padding:14px;border-radius:12px;background:linear-gradient(135deg,#f5edd8,#ede0c8);border:1px solid #e0d0a8">
+      <div style="font-size:13px;color:#8b6914;font-weight:600;letter-spacing:1px;margin-bottom:4px">🌸 节气</div>
+      <div style="font-size:14px;color:#5a4a1a;line-height:1.6">距<strong>立春</strong>还有 <strong>3 天</strong></div>
+      <div style="font-size:12px;color:#8a7a5a;margin-top:4px">立春乃万物起始之节，宜祈福纳祥</div>
+    </div>
+
+  </section><!-- /view-huangli -->
+
+  <!-- ════════════════════ 月历页 ═══════════════════ -->
+  <section id="view-yueli" class="view hidden">
+
+    <div class="cal-header">
+      <button class="hl-nav-btn" aria-label="上月">◀</button>
+      <div class="cal-month">二〇二六 · 腊月</div>
+      <button class="hl-nav-btn" aria-label="下月">▶</button>
+    </div>
+
+    <div class="cal-grid">
+      <!-- 星期头 -->
+      <div class="cal-weekday">日</div>
+      <div class="cal-weekday">一</div>
+      <div class="cal-weekday">二</div>
+      <div class="cal-weekday">三</div>
+      <div class="cal-weekday">四</div>
+      <div class="cal-weekday">五</div>
+      <div class="cal-weekday">六</div>
+
+      <!-- 第一周 -->
+      <div class="cal-day off"></div>
+      <div class="cal-day off">1</div>
+      <div class="cal-day">2</div>
+      <div class="cal-day">3</div>
+      <div class="cal-day today">4<span class="dot has-record"></span></div>
+      <div class="cal-day">5</div>
+      <div class="cal-day">6</div>
+
+      <!-- 第二周 -->
+      <div class="cal-day">7</div>
+      <div class="cal-day">8</div>
+      <div class="cal-day">9</div>
+      <div class="cal-day">10<span class="dot has-record"></span></div>
+      <div class="cal-day">11</div>
+      <div class="cal-day">12</div>
+      <div class="cal-day">13<span class="dot has-record"></span></div>
+
+      <!-- 第三周 -->
+      <div class="cal-day">14</div>
+      <div class="cal-day">15</div>
+      <div class="cal-day">16<span class="dot has-record"></span></div>
+      <div class="cal-day">17</div>
+      <div class="cal-day">18<span class="dot has-record"></span></div>
+      <div class="cal-day">19</div>
+      <div class="cal-day">20</div>
+
+      <!-- 第四周 -->
+      <div class="cal-day">21</div>
+      <div class="cal-day">22</div>
+      <div class="cal-day">23</div>
+      <div class="cal-day">24<span class="dot has-record"></span></div>
+      <div class="cal-day">25</div>
+      <div class="cal-day">26</div>
+      <div class="cal-day">27<span class="dot has-record"></span></div>
+
+      <!-- 第五周 -->
+      <div class="cal-day">28</div>
+      <div class="cal-day off">29</div>
+      <div class="cal-day off">30</div>
+      <div class="cal-day off">31</div>
+      <div class="cal-day off"></div>
+      <div class="cal-day off"></div>
+      <div class="cal-day off"></div>
+    </div>
+
+    <div class="cal-legend">
+      <span><i class="ldot"></i> 已求签</span>
+    </div>
+
+    <!-- 月历统计 -->
+    <div style="margin:16px 0;padding:14px;border-radius:12px;background:var(--bg-card);border:1px solid var(--line);box-shadow:var(--card-shadow)">
+      <div style="font-size:14px;color:var(--gold);font-weight:600;letter-spacing:1px;margin-bottom:10px;font-family:'Noto Serif SC','Source Han Serif SC','Songti SC',serif">
+        本月签运统计
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center">
+        <div><div style="font-size:20px;font-weight:700;color:var(--t-top)">2</div><div style="font-size:10px;color:var(--ink-light)">上上</div></div>
+        <div><div style="font-size:20px;font-weight:700;color:var(--t-high)">1</div><div style="font-size:10px;color:var(--ink-light)">上</div></div>
+        <div><div style="font-size:20px;font-weight:700;color:var(--t-mid)">3</div><div style="font-size:10px;color:var(--ink-light)">中</div></div>
+        <div><div style="font-size:20px;font-weight:700;color:var(--t-mid-high)">1</div><div style="font-size:10px;color:var(--ink-light)">中上</div></div>
+      </div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);font-size:12.5px;color:var(--ink-light);text-align:center;letter-spacing:.5px">
+        本月共求签 <strong style="color:var(--gold)">7</strong> 支 · 最佳签运日：<strong style="color:var(--vermilion)">初四、十八</strong>
+      </div>
+    </div>
+
+  </section><!-- /view-yueli -->
+
+  <!-- ════════════════════ Footer ═══════════════════ -->
+  <footer class="footer">
+    起个卦 · 内容参考传统易学文化，仅供文化体验与自省之趣<br>
+    人生大事请以理性与专业意见为准 · 记录仅存于本机浏览器
+  </footer>
+
+  <!-- ════════════════════ Tab Bar ═══════════════════ -->
+  <nav class="tabbar">
+    <a href="#" class="on" data-view="qiu">求签</a>
+    <a href="#" data-view="huangli">黄历</a>
+    <a href="#" data-view="yueli">月历</a>
+  </nav>
+
+</div><!-- /phone-frame -->
+
+</body>
+</html>

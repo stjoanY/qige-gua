@@ -1,0 +1,4 @@
+node: C:\Users\stjoa\.workbuddy\binaries\node\versions\22.22.2-6\node.EXE
+docs True
+tests True
+index.html False

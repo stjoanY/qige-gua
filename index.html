@@ -1301,12 +1301,21 @@ var Store = (function(){
     try { localStorage.setItem(KEY, JSON.stringify(cache)); return true; }
     catch (e){ available = false; reason = "写入失败，已切为会话内保存"; mem = cache; return false; }
   }
+  function getOrCreateSeed(){ /* 每日一签个性化种子：首次访问生成后持久化，同设备稳定、不同设备分化 */
+    var c = load();
+    if (c.seed == null) {
+      c.seed = Math.floor(Math.random() * 65536); /* 0~65535，只在 UI 初始化时用一次 */
+      persist();
+    }
+    return c.seed;
+  }
   return {
     available: function(){ return available; },
     reason: function(){ return reason; },
     records: function(){ return load().records; },
     add: function(rec){ load().records.push(rec); persist(); return rec; },
-    touch: function(){ persist(); }
+    touch: function(){ persist(); },
+    getSeed: getOrCreateSeed
   };
 })();
 
@@ -1368,11 +1377,14 @@ function composeDraw(g, dp){ /* 起卦数+日期 → 完整出签数据（纯函
     }
   };
 }
-function dailyGua(dp){ /* 每日一签：固定午时（时支数 7），日期纯函数，不依赖存储 */
+function dailyGua(dp){ /* 每日一签：固定午时 + 个人种子（不同设备/人每天看到不同的签） */
   var lunar = CAL.solarToLunar(dp.y, dp.m, dp.d);
   if (!lunar) return null;
   var yg = CAL.yearGanzhi(dp.y, dp.m, dp.d);
-  return MEI.qiguaByTime(ZHI.indexOf(yg.z)+1, lunar.m, lunar.d, CONFIG.dailyHourBranch);
+  var seed = Store.getSeed(); /* 每设备唯一种子，首次访问生成后持久化 */
+  /* 种子混入时支参数：相当于每个人在自己的"私有时辰"起卦，结果自然分化 */
+  var hb = ((CONFIG.dailyHourBranch - 1 + seed) % 12) + 1; /* 1~12 循环偏移 */
+  return MEI.qiguaByTime(ZHI.indexOf(yg.z)+1, lunar.m, lunar.d, hb);
 }
 function buildRecord(draw, type, q, dp){ /* 记录=解签快照（历史不可变）+ 紧凑字段 */
   var s = draw.sign, gr = draw.grade, pan = draw.pan;

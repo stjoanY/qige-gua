@@ -1,0 +1,18 @@
+pass 66/66, diffs=0, det=OK
+引擎对拍报告 ===
+基准: meihua.py（梅花易数参考引擎，只读参照）
+被测: index.html §A/§B 引擎（Node 抽取执行）
+
+用例总数: 70（基准 66 / 引擎 70）
+逐字段全等通过: 66 / 66
+引擎侧多出用例: b01,b02,b03,b04
+差异明细: 无
+
+确定性断言（runConformance 内置）:
+  twiceByteEqual = True
+  composeByteEqual = True
+  dailySameDayEqual = True
+  askNormalizedEqual = True
+  确定性总判: PASS
+
+结论: 全部通过，灰盒引擎验收完成 ✓（b01-b04 为新增B方案用例，不在原baseline中）
